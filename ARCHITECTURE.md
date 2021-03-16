@@ -1,0 +1,7 @@
+- Plugin structure via https://github.com/tmux-plugins/tpm/blob/master/docs/how_to_create_plugin.md
+- Pomodoro start
+    - Uses `date +%s` to get current timestamp and writes to `/tmp/pomodoro.txt`
+- Pomodoro status
+    - Compares current timestamp (via `date +%s`) with the start timestamp in `/tmp/pomodoro.txt`
+- Pomodoro cancel
+    - Delete `/tmp/pomodoro.txt`
