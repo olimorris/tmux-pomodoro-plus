@@ -1,7 +1,5 @@
 # Tmux Pomodoro Plus
-Use the Pomodoro technique in tmux.
-
-Incorporate the [Pomodoro technique](https://en.wikipedia.org/wiki/Pomodoro_Technique) into your tmux setup and toggle with custom keybindings.
+Incorporate the [Pomodoro technique](https://en.wikipedia.org/wiki/Pomodoro_Technique) into your tmux setup.
 
 ## Features
 - Toggle Pomodoro timer on/off and see the countdown in the status bar
