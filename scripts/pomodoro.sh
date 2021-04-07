@@ -1,16 +1,31 @@
 #!/usr/bin/env bash
 
-# ----- Configuration -----
+################################# SET VARIABLES ################################
 
-POMODORO_DURATION_MINUTES=25
-POMODORO_BREAK_MINUTES=5
+CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+pomodoro_duration_minutes="@pomodoro_mins"
+pomodoro_break_minutes="@pomodoro_break_mins"
+
+pomodoro_on="@pomodoro_on"
+pomodoro_complete="@pomodoro_complete"
+pomodoro_on_default="P:"
+pomodoro_complete_default="✅"
 
 POMODORO_DIR="/tmp"
 POMODORO_FILE="$POMODORO_DIR/pomodoro.txt"
 
-# ----- Do not edit below this -----
+source $CURRENT_DIR/helpers.sh
 
-# ----- Functionality -----
+################################# FUNCTIONALITY ################################
+
+get_pomodoro_duration () {
+    get_tmux_option "$pomodoro_duration_minutes" "25"
+}
+
+get_pomodoro_break () {
+    get_tmux_option "$pomodoro_break_minutes" "5"
+}
 
 get_seconds () {
     date +%s
@@ -57,37 +72,34 @@ pomodoro_status () {
     local pomodoro_start_time=$(read_pomodoro_start_time)
     local current_time=$(get_seconds)
     local difference=$(( ($current_time - $pomodoro_start_time) / 60 ))
-
+    
     if [ $pomodoro_start_time -eq -1 ]
     then
         echo ""
-    elif [ $difference -ge $(( $POMODORO_DURATION_MINUTES + $POMODORO_BREAK_MINUTES )) ]
+    elif [ $difference -ge $(( $(get_pomodoro_duration) + $(get_pomodoro_break) )) ]
     then
         pomodoro_start_time=-1
         echo ""
-    elif [ $difference -ge $POMODORO_DURATION_MINUTES ]
+    elif [ $difference -ge $(get_pomodoro_duration) ]
     then
-        echo "[P:✅] "
+        printf "$(get_tmux_option "$pomodoro_complete" "$pomodoro_complete_default")$(( -($difference - $(get_pomodoro_duration) - $(get_pomodoro_break)) )) "
     else
-        echo "[P:$(( $POMODORO_DURATION_MINUTES - $difference ))] "
+        printf "$(get_tmux_option "$pomodoro_on" "$pomodoro_on_default")$(( $(get_pomodoro_duration) - $difference )) "
     fi
 }
 
 main () {
     cmd=$1
     shift
-
+    
     if [ "$cmd" = "start" ]
     then
         pomodoro_start
     elif [ "$cmd" = "cancel" ]
     then
         pomodoro_cancel
-    elif [ "$cmd" = "status" ]
-    then
-        pomodoro_status
     else
-        echo "❓ |$cmd|"
+        pomodoro_status
     fi
 }
 
