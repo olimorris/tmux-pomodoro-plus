@@ -1,5 +1,5 @@
-# Tmux Pomodoro Plus - Use the Pomodoro technique in Tmux
-This builds on the excellent work by `swaroopch/tmux-pomodoro`.
+# Tmux Pomodoro Plus
+Use the Pomodoro technique in Tmux.
 
 Incorporate the [Pomodoro technique](https://en.wikipedia.org/wiki/Pomodoro_Technique) into your Tmux setup and toggle with custom keybindings.
 
