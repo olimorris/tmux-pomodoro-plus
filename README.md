@@ -1,7 +1,7 @@
 # Tmux Pomodoro Plus
-Use the Pomodoro technique in Tmux.
+Use the Pomodoro technique in tmux.
 
-Incorporate the [Pomodoro technique](https://en.wikipedia.org/wiki/Pomodoro_Technique) into your Tmux setup and toggle with custom keybindings.
+Incorporate the [Pomodoro technique](https://en.wikipedia.org/wiki/Pomodoro_Technique) into your tmux setup and toggle with custom keybindings.
 
 ## Features
 - Toggle Pomodoro timer on/off and see the countdown in the status bar
@@ -69,7 +69,7 @@ set -g @pomodoro_cancel 'A'
 
 ### Animation
 ![Plugin animation](screenshots/pomodoro.gif "Plugin animation")
-> Note: <kbd>Ctrl</kbd> + <kbd>a</kbd> is the Tmux key-bind in this video
+> Note: <kbd>Ctrl</kbd> + <kbd>a</kbd> is the tmux key-bind in this video
 
 ### Default status bar
 - Pomodoro on
