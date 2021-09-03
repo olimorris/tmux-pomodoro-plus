@@ -66,22 +66,22 @@ set -g @pomodoro_cancel 'A'
 ## Screenshots
 
 ### Animation
-![Plugin animation](https://user-images.githubusercontent.com/9512444/131862952-fdf5e343-6d0e-4d3f-ad71-057d0cf44819.png "Plugin animation")
+![Plugin animation](https://user-images.githubusercontent.com/9512444/132001146-c0b175bb-d555-4576-ae23-459dcce1606f.gif "Plugin animation")
 > Note: <kbd>Ctrl</kbd> + <kbd>a</kbd> is the tmux key-bind in this video
 
 ### Default status bar
 - Pomodoro on
-![Pomodoro on](https://user-images.githubusercontent.com/9512444/131863201-e9023f9b-3967-4ba1-bd36-0fab803dedc5.png "Pomodoro on")
+![Pomodoro on](https://user-images.githubusercontent.com/9512444/132001545-990ecf87-2632-4279-ba76-0302eae00e81.png "Pomodoro on")
 
 - Pomodoro interval complete, break countdown
-![Pomodoro break](https://user-images.githubusercontent.com/9512444/131863083-427021ec-4d46-4366-b7dc-27415fadc78e.png "Pomodoro break")
+![Pomodoro break](https://user-images.githubusercontent.com/9512444/132001492-d11d8491-f17e-400a-95b2-df21f4846ae4.png "Pomodoro break")
 
 ### Example: Customised status bar
 - Pomodoro on
-![Pomodoro on](https://user-images.githubusercontent.com/9512444/131863235-4409401e-8957-4f7e-9783-08e657b0eab7.png "Pomodoro on")
+![Pomodoro on](https://user-images.githubusercontent.com/9512444/132001344-0d37ba38-ce9d-4b9f-b0c1-af1c82a4fc0e.png "Pomodoro on")
 
 - Pomodoro interval complete, break countdown
-![Pomodoro break](https://user-images.githubusercontent.com/9512444/131863103-86c07439-5bf1-40bb-8b32-afaf8e97a4b7.png "Pomodoro break")
+![Pomodoro break](https://user-images.githubusercontent.com/9512444/132001439-cd6b3acd-1cba-42b5-82a6-a351f47d8e98.png "Pomodoro break")
 
 > Note: Using custom Nerdfont icons in the above screenshots
 
