@@ -1,7 +1,7 @@
-# Tmux Pomodoro Plus
+# 🍅 Tmux Pomodoro Plus
 Incorporate the [Pomodoro technique](https://en.wikipedia.org/wiki/Pomodoro_Technique) into your tmux setup.
 
-## Features
+## ✨ Features
 - Toggle Pomodoro timer on/off and see the countdown in the status bar
 - Upon completion of an interval, see a break countdown in the status bar
 
@@ -12,7 +12,7 @@ This plugin also adds additional functionality on top of `swaroopch/tmux-pomodor
 - Ability to format the Pomodoro status
 - Ability to set custom keybindings to toggle on and off
 
-## Installation
+## 📦 Installation
 
 1. Using [TPM](https://github.com/tmux-plugins/tpm), add the following line to your `~/.tmux.conf` file:
 
@@ -24,7 +24,7 @@ set -g @plugin 'olimorris/tmux-pomodoro-plus'
 
 2. Then press `prefix` + <kbd>I</kbd> (capital i, as in **I**nstall) to fetch the plugin as per the TPM installation instructions.
 
-## Usage
+## 🚀 Usage
 
 To incorporate into your status bar:
 
@@ -38,7 +38,7 @@ set -g status-right "#{pomodoro_status}"
 
 Where `C-b` is your Tmux bind-key.
 
-### Config
+## ⚙️ Config
 Some possible options for configuration are:
 
 ```bash
@@ -53,7 +53,7 @@ set -g @pomodoro_start 'a'
 set -g @pomodoro_cancel 'A'
 ```
 
-## How it works
+## 🔬 How it works
 - Starting a Pomodoro
     - Uses `date +%s` to get current timestamp and write to `/tmp/pomodoro.txt`
     - This enables you to reset the countdown
@@ -63,7 +63,7 @@ set -g @pomodoro_cancel 'A'
     - Countdown: Compares current timestamp (via `date +%s`) with the start timestamp in `/tmp/pomodoro.txt`
     - Break: Compares the current timestamp with the start timestamp and adds on the break duration
 
-## Screenshots
+## 📸 Screenshots
 
 ### Animation
 ![Plugin animation](https://user-images.githubusercontent.com/9512444/132001146-c0b175bb-d555-4576-ae23-459dcce1606f.gif "Plugin animation")
@@ -85,5 +85,5 @@ set -g @pomodoro_cancel 'A'
 
 > Note: Using custom Nerdfont icons in the above screenshots
 
-## License
+## 📄 License
 [MIT](https://github.com/olimorris/tmux-pomodoro-plus/blob/master/LICENSE.md)
