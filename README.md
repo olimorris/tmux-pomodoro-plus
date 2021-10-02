@@ -11,6 +11,7 @@ This plugin also adds additional functionality on top of `swaroopch/tmux-pomodor
 - Ability to choose the icons for the Pomodoro status
 - Ability to format the Pomodoro status
 - Ability to set custom keybindings to toggle on and off
+- Ability to have desktop alerts for pomodoro and break completion (macOS only)
 
 ## 📦 Installation
 
@@ -38,17 +39,18 @@ set -g status-right "#{pomodoro_status}"
 
 Where `C-b` is your Tmux bind-key.
 
-## ⚙️ Config
+## ⚙️ Configuration
 Some possible options for configuration are:
 
 ```bash
 # Options
-set -g @pomodoro_mins 25
-set -g @pomodoro_break_mins 5
-set -g @pomodoro_on " #[fg=$text_red]🍅 "
-set -g @pomodoro_complete " #[fg=$text_green]🍅 "
+set -g @pomodoro_mins 25                            # The duration of the pomodoro
+set -g @pomodoro_break_mins 5                       # The duration of the break after the pomodoro
+set -g @pomodoro_on " #[fg=$text_red]🍅 "           # The formatted output when the pomodoro is running
+set -g @pomodoro_complete " #[fg=$text_green]🍅 "   # The formatted output when the break is running
+set -g @pomodoro_notifications 'on'                 # Turn on desktop notifications
 
-# Keybindings
+# Keybindings - Use your binding key followed by 'a' or 'A' to start or cancel
 set -g @pomodoro_start 'a'
 set -g @pomodoro_cancel 'A'
 ```

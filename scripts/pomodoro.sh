@@ -9,11 +9,13 @@ pomodoro_break_minutes="@pomodoro_break_mins"
 
 pomodoro_on="@pomodoro_on"
 pomodoro_complete="@pomodoro_complete"
+pomodoro_notifcations="@pomodoro_notifications"
 pomodoro_on_default="P:"
 pomodoro_complete_default="✅"
 
 POMODORO_DIR="/tmp"
 POMODORO_FILE="$POMODORO_DIR/pomodoro.txt"
+POMODORO_STATUS_FILE="$POMODORO_DIR/pomodoro_status.txt"
 
 source $CURRENT_DIR/helpers.sh
 
@@ -31,24 +33,31 @@ get_seconds () {
     date +%s
 }
 
-write_pomodoro_start_time () {
-    mkdir -p $POMODORO_DIR
-    echo $(get_seconds) > $POMODORO_FILE
+get_notifications () {
+    get_tmux_option "$pomodoro_notifcations" "off"
 }
 
-read_pomodoro_start_time () {
-    if [ -f $POMODORO_FILE ]
+write_to_file () {
+    local data=$1
+    local file=$2
+    echo "$data" > "$file"
+}
+
+read_file () {
+    local file=$1
+    if [ -f $1 ]
     then
-        cat $POMODORO_FILE
+        cat $1
     else
         echo -1
     fi
 }
 
-remove_pomodoro_start_time () {
-    if [ -f $POMODORO_FILE ]
+remove_file () {
+    local file=$1
+    if [ -f $file ]
     then
-        rm $POMODORO_FILE
+        rm $file
     fi
 }
 
@@ -56,20 +65,37 @@ if_inside_tmux () {
     test -n "${TMUX}"
 }
 
+send_notification () {
+    if [ $(get_notifications) == 'on' ]
+    then
+        local title=$1
+        local message=$2
+        osascript -e 'display notification "'"$message"'" with title "'"$title"'"'
+    fi
+}
+
+clean_env () {
+    remove_file "$POMODORO_FILE"
+    remove_file "$POMODORO_STATUS_FILE"
+}
+
 pomodoro_start () {
-    write_pomodoro_start_time
+    clean_env
+    mkdir -p $POMODORO_DIR
+    write_to_file $(get_seconds) $POMODORO_FILE
     if_inside_tmux && tmux refresh-client -S
     return 0
 }
 
 pomodoro_cancel () {
-    remove_pomodoro_start_time
+    clean_env
     if_inside_tmux && tmux refresh-client -S
     return 0
 }
 
 pomodoro_status () {
-    local pomodoro_start_time=$(read_pomodoro_start_time)
+    local pomodoro_start_time=$(read_file "$POMODORO_FILE")
+    local pomodoro_status=$(read_file "$POMODORO_STATUS_FILE")
     local current_time=$(get_seconds)
     local difference=$(( ($current_time - $pomodoro_start_time) / 60 ))
     
@@ -80,8 +106,18 @@ pomodoro_status () {
     then
         pomodoro_start_time=-1
         echo ""
+        if [ $pomodoro_status == 'on_break' ]
+        then
+            send_notification "Break finished!" "Your Pomodoro break is now over"
+            write_to_file "break_complete" "$POMODORO_STATUS_FILE"
+        fi
     elif [ $difference -ge $(get_pomodoro_duration) ]
     then
+        if [ $pomodoro_status -eq -1 ]
+        then
+            send_notification "Pomodoro completed!" "Your Pomodoro has completed"
+            write_to_file "on_break" "$POMODORO_STATUS_FILE"
+        fi
         printf "$(get_tmux_option "$pomodoro_complete" "$pomodoro_complete_default")$(( -($difference - $(get_pomodoro_duration) - $(get_pomodoro_break)) )) "
     else
         printf "$(get_tmux_option "$pomodoro_on" "$pomodoro_on_default")$(( $(get_pomodoro_duration) - $difference )) "
