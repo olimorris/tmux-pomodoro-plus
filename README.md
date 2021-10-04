@@ -1,5 +1,5 @@
 # 🍅 Tmux Pomodoro Plus
-Incorporate the [Pomodoro technique](https://en.wikipedia.org/wiki/Pomodoro_Technique) into your tmux setup.
+Incorporate the [Pomodoro technique](https://en.wikipedia.org/wiki/Pomodoro_Technique) into your tmux setup
 
 ## ✨ Features
 - Toggle Pomodoro timer on/off and see the countdown in the status bar
@@ -11,7 +11,7 @@ This plugin also adds additional functionality on top of `swaroopch/tmux-pomodor
 - Ability to choose the icons for the Pomodoro status
 - Ability to format the Pomodoro status
 - Ability to set custom keybindings to toggle on and off
-- Ability to have desktop alerts for pomodoro and break completion (macOS only)
+- Ability to have desktop alerts (with sound) for pomodoro and break completion (macOS only)
 
 ## 📦 Installation
 
@@ -44,23 +44,29 @@ Some possible options for configuration are:
 
 ```bash
 # Options
+set -g @pomodoro_start 'p'                          # Start a Pomodoro with bind key + p
+set -g @pomodoro_cancel 'P'                         # Cancel a Pomodoro with bind key + P
+
 set -g @pomodoro_mins 25                            # The duration of the pomodoro
 set -g @pomodoro_break_mins 5                       # The duration of the break after the pomodoro
+
 set -g @pomodoro_on " #[fg=$text_red]🍅 "           # The formatted output when the pomodoro is running
 set -g @pomodoro_complete " #[fg=$text_green]🍅 "   # The formatted output when the break is running
-set -g @pomodoro_notifications 'on'                 # Turn on desktop notifications
 
-# Keybindings - Use your binding key followed by 'a' or 'A' to start or cancel
-set -g @pomodoro_start 'a'
-set -g @pomodoro_cancel 'A'
+set -g @pomodoro_notifications 'on'                 # Turn on/off desktop notifications
+set -g @pomodoro_sound 'Pop'                        # Sound for desktop notifications (Run `ls /System/Library/Sounds` for a list of sounds to use)
 ```
 
 ## 🔬 How it works
 - Starting a Pomodoro
-    - Uses `date +%s` to get current timestamp and write to `/tmp/pomodoro.txt`
-    - This enables you to reset the countdown
+    - Uses `date +%s` to get the current timestamp and write to `/tmp/pomodoro.txt`
+    - This allows the app to keep track of the elapsed time
+- Completing a Pomodoro
+    - Writes the status of the pomodoro to `/tmp/pomodoro_status.txt`
+    - This allows the app to know what type of notification to send
 - Cancelling a Pomodoro
     - Deletes `/tmp/pomodoro.txt`
+    - Deletes `/tmp/pomodoro_status.txt`
 - Getting the status of a Pomodoro
     - Countdown: Compares current timestamp (via `date +%s`) with the start timestamp in `/tmp/pomodoro.txt`
     - Break: Compares the current timestamp with the start timestamp and adds on the break duration
@@ -85,7 +91,7 @@ set -g @pomodoro_cancel 'A'
 - Pomodoro interval complete, break countdown
 ![Pomodoro break](https://user-images.githubusercontent.com/9512444/132001439-cd6b3acd-1cba-42b5-82a6-a351f47d8e98.png "Pomodoro break")
 
-> Note: Using custom Nerdfont icons in the above screenshots
+> Note: I'm using custom Nerdfont icons in the above screenshots
 
 ## 📄 License
 [MIT](https://github.com/olimorris/tmux-pomodoro-plus/blob/master/LICENSE.md)

@@ -10,6 +10,7 @@ pomodoro_break_minutes="@pomodoro_break_mins"
 pomodoro_on="@pomodoro_on"
 pomodoro_complete="@pomodoro_complete"
 pomodoro_notifcations="@pomodoro_notifications"
+pomodoro_sound="@pomodoro_sound"
 pomodoro_on_default="P:"
 pomodoro_complete_default="✅"
 
@@ -35,6 +36,10 @@ get_seconds () {
 
 get_notifications () {
     get_tmux_option "$pomodoro_notifcations" "off"
+}
+
+get_sound () {
+    get_tmux_option "$pomodoro_sound" "off"
 }
 
 write_to_file () {
@@ -70,7 +75,13 @@ send_notification () {
     then
         local title=$1
         local message=$2
-        osascript -e 'display notification "'"$message"'" with title "'"$title"'"'
+        local sound=$(get_sound)
+        if [ "$sound" == "off" ]
+        then
+            osascript -e 'display notification "'"$message"'" with title "'"$title"'"'
+        else
+            osascript -e 'display notification "'"$message"'" with title "'"$title"'" sound name "'"$sound"'"'
+        fi
     fi
 }
 
@@ -83,12 +94,14 @@ pomodoro_start () {
     clean_env
     mkdir -p $POMODORO_DIR
     write_to_file $(get_seconds) $POMODORO_FILE
+    send_notification "🍅 Pomodoro started!" "Your Pomodoro is underway"
     if_inside_tmux && tmux refresh-client -S
     return 0
 }
 
 pomodoro_cancel () {
     clean_env
+    send_notification "🍅 Pomodoro cancelled!" "Your Pomodoro was cancelled"
     if_inside_tmux && tmux refresh-client -S
     return 0
 }
@@ -108,14 +121,14 @@ pomodoro_status () {
         echo ""
         if [ $pomodoro_status == 'on_break' ]
         then
-            send_notification "Break finished!" "Your Pomodoro break is now over"
+            send_notification "🍅 Break finished!" "Your Pomodoro break is now over"
             write_to_file "break_complete" "$POMODORO_STATUS_FILE"
         fi
     elif [ $difference -ge $(get_pomodoro_duration) ]
     then
         if [ $pomodoro_status -eq -1 ]
         then
-            send_notification "Pomodoro completed!" "Your Pomodoro has completed"
+            send_notification "🍅 Pomodoro completed!" "Your Pomodoro has now completed"
             write_to_file "on_break" "$POMODORO_STATUS_FILE"
         fi
         printf "$(get_tmux_option "$pomodoro_complete" "$pomodoro_complete_default")$(( -($difference - $(get_pomodoro_duration) - $(get_pomodoro_break)) )) "
