@@ -1,4 +1,4 @@
-# 🍅 Tmux Pomodoro Plus
+# :tomato: Tmux Pomodoro Plus
 <i>Incorporate the <a href="https://en.wikipedia.org/wiki/Pomodoro_Technique">Pomodoro technique</a> into your tmux setup</i>
 
 ## :book: Table of Contents
@@ -9,6 +9,7 @@
 - [Configuration](#wrench-configuration)
 - [How it works](#microscope-how-it-works)
 - [Screenshots](#camera-screenshots)
+- [License](#page_with_curl-license)
 
 ## :sparkles: Features
 - Toggle Pomodoro timer on/off and see the countdown in the status bar
@@ -102,5 +103,5 @@ set -g @pomodoro_sound 'Pop'                        # Sound for desktop notifica
 
 > Note: I'm using custom Nerdfont icons in the above screenshots
 
-## 📄 License
+## :page_with_curl: License
 [MIT](https://github.com/olimorris/tmux-pomodoro-plus/blob/master/LICENSE.md)
