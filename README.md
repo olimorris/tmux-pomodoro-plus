@@ -1,7 +1,16 @@
 # 🍅 Tmux Pomodoro Plus
-Incorporate the [Pomodoro technique](https://en.wikipedia.org/wiki/Pomodoro_Technique) into your tmux setup
+<i>Incorporate the <a href="https://en.wikipedia.org/wiki/Pomodoro_Technique">Pomodoro technique</a> into your tmux setup</i>
 
-## ✨ Features
+## :book: Table of Contents
+
+- [Features](#sparkles-features)
+- [Installation](#package-installation)
+- [Usage](#rocket-usage)
+- [Configuration](#wrench-configuration)
+- [How it works](#microscope-how-it-works)
+- [Screenshots](#camera-screenshots)
+
+## :sparkles: Features
 - Toggle Pomodoro timer on/off and see the countdown in the status bar
 - Upon completion of an interval, see a break countdown in the status bar
 
@@ -13,7 +22,7 @@ This plugin also adds additional functionality on top of `swaroopch/tmux-pomodor
 - Ability to set custom keybindings to toggle on and off
 - Ability to have desktop alerts (with sound) for pomodoro and break completion (macOS only)
 
-## 📦 Installation
+## :package: Installation
 
 1. Using [TPM](https://github.com/tmux-plugins/tpm), add the following line to your `~/.tmux.conf` file:
 
@@ -25,7 +34,7 @@ set -g @plugin 'olimorris/tmux-pomodoro-plus'
 
 2. Then press `prefix` + <kbd>I</kbd> (capital i, as in **I**nstall) to fetch the plugin as per the TPM installation instructions.
 
-## 🚀 Usage
+## :rocket: Usage
 
 To incorporate into your status bar:
 
@@ -39,7 +48,7 @@ set -g status-right "#{pomodoro_status}"
 
 Where `C-b` is your Tmux bind-key.
 
-## ⚙️ Configuration
+## :wrench: Configuration
 Some possible options for configuration are:
 
 ```bash
@@ -57,7 +66,7 @@ set -g @pomodoro_notifications 'on'                 # Turn on/off desktop notifi
 set -g @pomodoro_sound 'Pop'                        # Sound for desktop notifications (Run `ls /System/Library/Sounds` for a list of sounds to use)
 ```
 
-## 🔬 How it works
+## :microscope: How it works
 - Starting a Pomodoro
     - Uses `date +%s` to get the current timestamp and write to `/tmp/pomodoro.txt`
     - This allows the app to keep track of the elapsed time
@@ -71,7 +80,7 @@ set -g @pomodoro_sound 'Pop'                        # Sound for desktop notifica
     - Countdown: Compares current timestamp (via `date +%s`) with the start timestamp in `/tmp/pomodoro.txt`
     - Break: Compares the current timestamp with the start timestamp and adds on the break duration
 
-## 📸 Screenshots
+## :camera: Screenshots
 
 ### Animation
 ![Plugin animation](https://user-images.githubusercontent.com/9512444/132001146-c0b175bb-d555-4576-ae23-459dcce1606f.gif "Plugin animation")
