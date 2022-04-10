@@ -26,10 +26,10 @@ This plugin also adds additional functionality on top of `swaroopch/tmux-pomodor
 ## :camera: Screenshots
 
 Pomodoro being toggled on and off:
-![Image](https://user-images.githubusercontent.com/9512444/162631395-f8c7da93-abcf-4431-8825-40e30df6c60a.gif)
+![Image](https://user-images.githubusercontent.com/9512444/162638577-6f20e382-6974-4d55-8a3e-878b07926693.gif)
 
 Pomodoro transitioning to a break:
-![Image](https://user-images.githubusercontent.com/9512444/162631598-63f6f123-1e0c-4086-9321-373cdd7e046f.gif)
+![Image](https://user-images.githubusercontent.com/9512444/162638799-0b041e4e-c7c6-4692-9e4c-c0ed835bda30.gif)
 
 ## :package: Installation
 
