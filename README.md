@@ -25,25 +25,11 @@ This plugin also adds additional functionality on top of `swaroopch/tmux-pomodor
 
 ## :camera: Screenshots
 
-### Animation
-![Plugin animation](https://user-images.githubusercontent.com/9512444/132001146-c0b175bb-d555-4576-ae23-459dcce1606f.gif "Plugin animation")
-> Note: <kbd>Ctrl</kbd> + <kbd>a</kbd> is the tmux prefix key in this video
+Pomodoro being toggled on and off:
+![Image](https://user-images.githubusercontent.com/9512444/162631395-f8c7da93-abcf-4431-8825-40e30df6c60a.gif)
 
-### Default status bar
-- Pomodoro on
-![Pomodoro on](https://user-images.githubusercontent.com/9512444/132001545-990ecf87-2632-4279-ba76-0302eae00e81.png "Pomodoro on")
-
-- Pomodoro interval complete, break countdown
-![Pomodoro break](https://user-images.githubusercontent.com/9512444/132001492-d11d8491-f17e-400a-95b2-df21f4846ae4.png "Pomodoro break")
-
-### Example: Customised status bar
-- Pomodoro on
-![Pomodoro on](https://user-images.githubusercontent.com/9512444/132001344-0d37ba38-ce9d-4b9f-b0c1-af1c82a4fc0e.png "Pomodoro on")
-
-- Pomodoro interval complete, break countdown
-![Pomodoro break](https://user-images.githubusercontent.com/9512444/132001439-cd6b3acd-1cba-42b5-82a6-a351f47d8e98.png "Pomodoro break")
-
-> Note: I'm using custom Nerdfont icons in the above screenshots
+Pomodoro transitioning to a break:
+![Image](https://user-images.githubusercontent.com/9512444/162631598-63f6f123-1e0c-4086-9321-373cdd7e046f.gif)
 
 ## :package: Installation
 
