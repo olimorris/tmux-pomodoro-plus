@@ -1,5 +1,5 @@
 # :tomato: Tmux Pomodoro Plus
-<i>Incorporate the <a href="https://en.wikipedia.org/wiki/Pomodoro_Technique">Pomodoro technique</a> into your tmux setup</i>
+Incorporate the <a href="https://en.wikipedia.org/wiki/Pomodoro_Technique">Pomodoro technique</a> into your [tmux](https://github.com/tmux/tmux) setup. Forked from [Tmux Pomodoro](https://github.com/alexanderjeurissen/tmux-pomodoro).
 
 ## :book: Table of Contents
 
