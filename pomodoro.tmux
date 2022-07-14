@@ -17,6 +17,7 @@ set_start_binding() {
 	local key
 	for key in $key_bindings; do
 		tmux bind-key "$key" run-shell "$CURRENT_DIR/scripts/pomodoro.sh start"
+		tmux bind-key "C-$key" run-shell "$CURRENT_DIR/scripts/pomodoro.sh manual"
 	done
 }
 

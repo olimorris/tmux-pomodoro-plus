@@ -109,6 +109,10 @@ pomodoro_cancel() {
 	return 0
 }
 
+pomodoro_manual() {
+	tmux command-prompt -p 'Pomodoro Mins:' 'set -g @pomodoro_mins %1'
+}
+
 pomodoro_status() {
 	local pomodoro_start_time=$(read_file "$POMODORO_FILE")
 	local pomodoro_status=$(read_file "$POMODORO_STATUS_FILE")
@@ -143,6 +147,8 @@ main() {
 		pomodoro_start
 	elif [ "$cmd" = "cancel" ]; then
 		pomodoro_cancel
+	elif [ "$cmd" = "manual" ]; then
+		pomodoro_manual
 	else
 		pomodoro_status
 	fi
