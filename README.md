@@ -1,7 +1,7 @@
 # Tmux Pomodoro Plus
 
 <p align="center">
-<img src="https://user-images.githubusercontent.com/9512444/179046272-8f5a8309-f9c4-4e38-b858-81c31c3719be.png" alt="Tmux Pomodoro Plus" />
+<img src="https://user-images.githubusercontent.com/9512444/179077304-a6c31ccb-ad8f-41d9-97f8-f09a1c4935ad.png" alt="Tmux Pomodoro Plus" />
 </p>
 
 <p align="center">
