@@ -110,7 +110,7 @@ pomodoro_cancel() {
 }
 
 pomodoro_manual() {
-	tmux command-prompt -p 'Pomodoro Mins:' 'set -g @pomodoro_mins %1'
+	tmux command-prompt -p 'Pomodoro duration (mins):' 'set -g @pomodoro_mins %1'
 }
 
 pomodoro_status() {
