@@ -124,7 +124,7 @@ pomodoro_cancel() {
 pomodoro_manual() {
 	tmux command-prompt \
 		-I "$(get_pomodoro_duration), $(get_pomodoro_break)" \
-		-p 'Pomodoro Minutes:, Break Minutes:' 'set -g @pomodoro_mins %1; set -g @pomodoro_break_mins %2'
+		-p 'Pomodoro duration (mins):, Break duration (mins):' 'set -g @pomodoro_mins %1; set -g @pomodoro_break_mins %2'
 	write_to_file $(get_pomodoro_duration) "$POMODORO_MINS_FILE"
 	write_to_file $(get_pomodoro_break) "$POMODORO_BREAK_MINS_FILE"
 }

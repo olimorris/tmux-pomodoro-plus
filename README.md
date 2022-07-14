@@ -1,5 +1,12 @@
-# :tomato: Tmux Pomodoro Plus
-Incorporate the <a href="https://en.wikipedia.org/wiki/Pomodoro_Technique">Pomodoro technique</a> into your [tmux](https://github.com/tmux/tmux) setup. Forked from [Tmux Pomodoro](https://github.com/alexanderjeurissen/tmux-pomodoro).
+# Tmux Pomodoro Plus
+
+<p align="center">
+<img src="https://user-images.githubusercontent.com/9512444/179077304-a6c31ccb-ad8f-41d9-97f8-f09a1c4935ad.png" alt="Tmux Pomodoro Plus" />
+</p>
+
+<p align="center">
+Incorporate the <a href="https://en.wikipedia.org/wiki/Pomodoro_Technique">Pomodoro technique</a> into your <a href="https://github.com/tmux/tmux">tmux</a> setup. Forked from <a href="https://github.com/alexanderjeurissen/tmux-pomodoro">Tmux Pomodoro</a>
+</p>
 
 ## :book: Table of Contents
 
@@ -9,27 +16,23 @@ Incorporate the <a href="https://en.wikipedia.org/wiki/Pomodoro_Technique">Pomod
 - [Usage](#rocket-usage)
 - [Configuration](#wrench-configuration)
 - [How it works](#microscope-how-it-works)
+- [Thanks](#clap-thanks)
 - [License](#page_with_curl-license)
 
 ## :sparkles: Features
-- Toggle Pomodoro timer on/off and see the countdown in the status bar
-- Upon completion of an interval, see a break countdown in the status bar
-
-This plugin also adds additional functionality on top of `swaroopch/tmux-pomodoro`:
-- Ability to specify the Pomodoro duration and break times
-- Ability to choose where to place the Pomodoro status within your status bar
-- Ability to choose the icons for the Pomodoro status
-- Ability to format the Pomodoro status
-- Ability to set custom keybindings to toggle on and off
-- Ability to have desktop alerts (with sound) for pomodoro and break completion (macOS only)
+- Toggle pomodoro timer on/off and see the countdown in the status bar
+- Upon completion of a pomodoro, see a break countdown in the status bar
+- Desktop alerts for pomodoro and break completion (macOS and Linux only)
+- Customise the pomodoro duration and break times
+- Custom keybindings
 
 ## :camera: Screenshots
 
-Pomodoro being toggled on and off:
-![Image](https://user-images.githubusercontent.com/9512444/162638577-6f20e382-6974-4d55-8a3e-878b07926693.gif)
+Pomodoro counting down:
+![Image](https://user-images.githubusercontent.com/9512444/179062001-d75827f6-7142-4bc2-a494-2efd450b2e32.png)
 
-Pomodoro transitioning to a break:
-![Image](https://user-images.githubusercontent.com/9512444/162638799-0b041e4e-c7c6-4692-9e4c-c0ed835bda30.gif)
+Pomodoro on a break:
+![Image](https://user-images.githubusercontent.com/9512444/179061730-6b1cc2d5-eea4-443a-b19c-80a8f6683b16.png)
 
 ## :package: Installation
 
@@ -54,12 +57,14 @@ set -g status-right "#{pomodoro_status}"
 ### Default keybindings
 - `<tmux-prefix> p` to start a pomodoro
 - `<tmux-prefix> P` to cancel a pomodoro
+- `<tmux-prefix> C-p` to set a custom pomodoro duration
+
+> Note: The custom pomodoro duration is always `<ctrl> + [your start pomodoro key]`
 
 ## :wrench: Configuration
-Some possible options for configuration are:
+The default configuration is:
 
 ```bash
-# Options
 set -g @pomodoro_start 'p'                          # Start a Pomodoro with tmux-prefix + p
 set -g @pomodoro_cancel 'P'                         # Cancel a Pomodoro with tmux-prefix key + P
 
@@ -70,7 +75,7 @@ set -g @pomodoro_on " #[fg=$text_red]🍅 "           # The formatted output whe
 set -g @pomodoro_complete " #[fg=$text_green]🍅 "   # The formatted output when the break is running
 
 set -g @pomodoro_notifications 'on'                 # Turn on/off desktop notifications
-set -g @pomodoro_sound 'Pop'                        # Sound for desktop notifications (Run `ls /System/Library/Sounds` for a list of sounds to use)
+set -g @pomodoro_sound 'Pop'                        # Sound for desktop notifications (Run `ls /System/Library/Sounds` for a list of sounds to use on Mac)
 ```
 
 ## :microscope: How it works
@@ -86,6 +91,13 @@ set -g @pomodoro_sound 'Pop'                        # Sound for desktop notifica
 - Getting the status of a Pomodoro
     - Countdown: Compares current timestamp (via `date +%s`) with the start timestamp in `/tmp/pomodoro.txt`
     - Break: Compares the current timestamp with the start timestamp and adds on the break duration
+
+## :clap: Thanks
+
+Thanks to the following people:
+
+- [Wladyslaw Fedorov](https://dribbble.com/Wladza) - For the squashed tomato image
+- [basaran](https://github.com/basaran) - For the awesome pull request to add the linux notifications and the custom input for the pomodoro duration
 
 ## :page_with_curl: License
 [MIT](https://github.com/olimorris/tmux-pomodoro-plus/blob/master/LICENSE.md)
