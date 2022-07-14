@@ -73,11 +73,18 @@ send_notification() {
 		local title=$1
 		local message=$2
 		local sound=$(get_sound)
-		if [ "$sound" == "off" ]; then
-			osascript -e 'display notification "'"$message"'" with title "'"$title"'"'
-		else
-			osascript -e 'display notification "'"$message"'" with title "'"$title"'" sound name "'"$sound"'"'
+
+		if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+			notify-send -t 5000 "$title" "$message"
+
+		elif [[ "$OSTYPE" == "darwin"* ]]; then
+			if [[ sound == "on" ]]; then
+				osascript -e 'display notification "'"$message"'" with title "'"$title"'" sound name "'"$sound"'"'
+			else
+				osascript -e 'display notification "'"$message"'" with title "'"$title"'"'
+			fi
 		fi
+
 	fi
 }
 
@@ -122,9 +129,9 @@ pomodoro_status() {
 			send_notification "🍅 Pomodoro completed!" "Your Pomodoro has now completed"
 			write_to_file "on_break" "$POMODORO_STATUS_FILE"
 		fi
-		printf "$(get_tmux_option "$pomodoro_complete" "$pomodoro_complete_default")$((-($difference - $(get_pomodoro_duration) - $(get_pomodoro_break)))) "
+		printf "$(get_tmux_option "$pomodoro_complete" "$pomodoro_complete_default")$((-($difference - $(get_pomodoro_duration) - $(get_pomodoro_break))))m "
 	else
-		printf "$(get_tmux_option "$pomodoro_on" "$pomodoro_on_default")$(($(get_pomodoro_duration) - $difference)) "
+		printf "$(get_tmux_option "$pomodoro_on" "$pomodoro_on_default")$(($(get_pomodoro_duration) - $difference))m "
 	fi
 }
 
