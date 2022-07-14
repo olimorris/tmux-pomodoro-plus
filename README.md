@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-Incorporate the <a href="https://en.wikipedia.org/wiki/Pomodoro_Technique">Pomodoro technique</a> into your [tmux](https://github.com/tmux/tmux) setup. Forked from [Tmux Pomodoro](https://github.com/alexanderjeurissen/tmux-pomodoro).
+Incorporate the <a href="https://en.wikipedia.org/wiki/Pomodoro_Technique">Pomodoro technique</a> into your <a href="https://github.com/tmux/tmux">tmux</a> setup. Forked from <a href="https://github.com/alexanderjeurissen/tmux-pomodoro">Tmux Pomodoro</a>
 </p>
 
 ## :book: Table of Contents
