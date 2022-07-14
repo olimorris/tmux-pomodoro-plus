@@ -17,6 +17,8 @@ pomodoro_complete_default="✅"
 POMODORO_DIR="/tmp"
 POMODORO_FILE="$POMODORO_DIR/pomodoro.txt"
 POMODORO_STATUS_FILE="$POMODORO_DIR/pomodoro_status.txt"
+POMODORO_MINS_FILE="$CURRENT_DIR/user_mins.txt";
+POMODORO_BREAK_MINS_FILE="$CURRENT_DIR/user_break_mins.txt"
 
 source $CURRENT_DIR/helpers.sh
 
@@ -97,6 +99,16 @@ pomodoro_start() {
 	clean_env
 	mkdir -p $POMODORO_DIR
 	write_to_file $(get_seconds) $POMODORO_FILE
+
+	if [ -f "$POMODORO_MINS_FILE" ] && [ -f "$POMODORO_BREAK_MINS_FILE" ]; then
+		user_pomodoro_mins=$(read_file "$POMODORO_MINS_FILE")
+		user_pomodoro_break_mins=$(read_file "$POMODORO_BREAK_MINS_FILE")
+		set_tmux_option @pomodoro_mins $user_pomodoro_mins
+		set_tmux_option @pomodoro_break_mins $user_pomodoro_break_mins
+	else
+		pomodoro_manual
+	fi
+
 	send_notification "🍅 Pomodoro started!" "Your Pomodoro is underway"
 	if_inside_tmux && tmux refresh-client -S
 	return 0
@@ -110,7 +122,11 @@ pomodoro_cancel() {
 }
 
 pomodoro_manual() {
-	tmux command-prompt -p 'Pomodoro duration (mins):' 'set -g @pomodoro_mins %1'
+	tmux command-prompt \
+		-I "$(get_pomodoro_duration), $(get_pomodoro_break)" \
+		-p 'Pomodoro Minutes:, Break Minutes:' 'set -g @pomodoro_mins %1; set -g @pomodoro_break_mins %2'
+	write_to_file $(get_pomodoro_duration) "$POMODORO_MINS_FILE"
+	write_to_file $(get_pomodoro_break) "$POMODORO_BREAK_MINS_FILE"
 }
 
 pomodoro_status() {
