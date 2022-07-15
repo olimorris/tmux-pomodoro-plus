@@ -59,23 +59,32 @@ set -g status-right "#{pomodoro_status}"
 - `<tmux-prefix> P` to cancel a pomodoro
 - `<tmux-prefix> C-p` to set a custom pomodoro duration
 
-> Note: The custom pomodoro duration is always `<ctrl> + [your start pomodoro key]`
+> **Note:** The custom pomodoro duration is always `<ctrl> + [your start pomodoro key]`
 
 ## :wrench: Configuration
 The default configuration is:
 
 ```bash
-set -g @pomodoro_start 'p'                          # Start a Pomodoro with tmux-prefix + p
-set -g @pomodoro_cancel 'P'                         # Cancel a Pomodoro with tmux-prefix key + P
+set -g @pomodoro_start 'p'                  # Start a Pomodoro with tmux-prefix + p
+set -g @pomodoro_cancel 'P'                 # Cancel a Pomodoro with tmux-prefix key + P
 
-set -g @pomodoro_mins 25                            # The duration of the pomodoro
-set -g @pomodoro_break_mins 5                       # The duration of the break after the pomodoro
+set -g @pomodoro_mins 25                    # The duration of the pomodoro
+set -g @pomodoro_break_mins 5               # The duration of the break after the pomodoro
 
-set -g @pomodoro_on " #[fg=$text_red]🍅 "           # The formatted output when the pomodoro is running
-set -g @pomodoro_complete " #[fg=$text_green]🍅 "   # The formatted output when the break is running
+set -g @pomodoro_on " 🍅"                   # The formatted output when the pomodoro is running
+set -g @pomodoro_complete " ✅"             # The formatted output when the break is running
 
-set -g @pomodoro_notifications 'on'                 # Turn on/off desktop notifications
-set -g @pomodoro_sound 'Pop'                        # Sound for desktop notifications (Run `ls /System/Library/Sounds` for a list of sounds to use on Mac)
+set -g @pomodoro_notifications 'off'        # Turn on/off desktop notifications from your terminal
+set -g @pomodoro_sound 'off'                # Sound for desktop notifications (Run `ls /System/Library/Sounds` for a list of sounds to use on Mac)
+```
+
+### Customising the status line
+
+The output from the plugin can be completely customised to fit in with your status line. For example:
+
+```bash
+set -g @pomodoro_on " #[fg=$text_red]🍅 "
+set -g @pomodoro_complete " #[fg=$text_green]🍅 "
 ```
 
 ## :microscope: How it works

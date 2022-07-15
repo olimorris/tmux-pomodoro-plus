@@ -14,8 +14,8 @@ pomodoro_on="@pomodoro_on"
 pomodoro_complete="@pomodoro_complete"
 pomodoro_notifcations="@pomodoro_notifications"
 pomodoro_sound="@pomodoro_sound"
-pomodoro_on_default="P:"
-pomodoro_complete_default="✅"
+pomodoro_on_default=" 🍅"
+pomodoro_complete_default=" ✅"
 
 # _____________________________________________________________| methods |__ ;
 
