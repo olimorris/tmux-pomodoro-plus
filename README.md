@@ -83,10 +83,9 @@ set -g @pomodoro_sound 'off'                # Sound for desktop notifications (R
 The output from the plugin can be completely customised to fit in with your status line. For example:
 
 ```bash
-set -g @pomodoro_on " #[fg=$text_red] "
-set -g @pomodoro_complete " #[fg=$text_green] "
+set -g @pomodoro_on " #[fg=$text_red]🍅 "
+set -g @pomodoro_complete " #[fg=$text_green]🍅 "
 ```
-> **Note:** The above configuration uses a patched Nerd font
 
 ## :microscope: How it works
 - Starting a Pomodoro
