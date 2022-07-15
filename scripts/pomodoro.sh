@@ -100,11 +100,21 @@ pomodoro_start() {
 	mkdir -p $POMODORO_DIR
 	write_to_file $(get_seconds) $POMODORO_FILE
 
-	if [ -f "$POMODORO_MINS_FILE" ] && [ -f "$POMODORO_BREAK_MINS_FILE" ]; then
+	#predefined variables take precedence
+	if [ $(get_tmux_option "@pomodoro_mins" 0) -gt 0 ] &&
+		   [ $(get_tmux_option "@pomodoro_break_mins" 0) -gt 0 ]; then
+		write_to_file $(get_pomodoro_duration) "$POMODORO_MINS_FILE"
+		write_to_file $(get_pomodoro_break) "$POMODORO_BREAK_MINS_FILE"
+
+	#try to use txt stored values
+	elif [ -f "$POMODORO_MINS_FILE" ] &&
+			 [ -f "$POMODORO_BREAK_MINS_FILE" ]; then
 		user_pomodoro_mins=$(read_file "$POMODORO_MINS_FILE")
 		user_pomodoro_break_mins=$(read_file "$POMODORO_BREAK_MINS_FILE")
 		set_tmux_option @pomodoro_mins $user_pomodoro_mins
 		set_tmux_option @pomodoro_break_mins $user_pomodoro_break_mins
+
+	#ask user to provide the timers
 	else
 		pomodoro_manual
 	fi
