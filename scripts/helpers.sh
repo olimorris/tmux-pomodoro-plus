@@ -14,3 +14,25 @@ set_tmux_option() {
 	local value="$2"
 	tmux set-option -gq "$option" "$value"
 }
+
+read_file() {
+	local file=$1
+	if [ -f $1 ]; then
+		cat $1
+	else
+		echo -1
+	fi
+}
+
+remove_file() {
+	local file=$1
+	if [ -f $file ]; then
+		rm $file
+	fi
+}
+
+write_to_file() {
+	local data=$1
+	local file=$2
+	echo "$data" >"$file"
+}
