@@ -2,9 +2,9 @@
 
 CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-default_start_pomodoro="a"
+default_start_pomodoro="p"
 start_pomodoro="@pomodoro_start"
-default_cancel_pomodoro="A"
+default_cancel_pomodoro="P"
 cancel_pomodoro="@pomodoro_cancel"
 
 pomodoro_status="#($CURRENT_DIR/scripts/pomodoro.sh)"
@@ -43,8 +43,8 @@ update_tmux_option() {
 }
 
 main() {
-    set_start_binding
-    set_cancel_binding
+	set_start_binding
+	set_cancel_binding
 	update_tmux_option "status-right"
 	update_tmux_option "status-left"
 }
