@@ -34,6 +34,9 @@ Pomodoro counting down:
 Pomodoro on a break:
 ![Image](https://user-images.githubusercontent.com/9512444/179061730-6b1cc2d5-eea4-443a-b19c-80a8f6683b16.png)
 
+Pomodoro timer menu:
+![Image](https://user-images.githubusercontent.com/9512444/179624439-c5203dd1-01a9-4bf8-93dc-3da162939a4a.gif)
+
 ## :package: Installation
 
 1. Using [TPM](https://github.com/tmux-plugins/tpm), add the following line to your `~/.tmux.conf` file:
@@ -48,22 +51,24 @@ set -g @plugin 'olimorris/tmux-pomodoro-plus'
 
 ## :rocket: Usage
 
+### Default keybindings
+- `<tmux-prefix> p` to start a pomodoro
+- `<tmux-prefix> P` to cancel a pomodoro
+- `<tmux-prefix> C-p` to open the pomodoro timer menu
+- `<tmux-prefix> M-p` to set a custom pomodoro timer
+
+> **Note:** The pomodoro timer menu and custom pomodoro input is always `<ctrl> + [your start pomodoro key]`
+
+### Status bar
+
 To incorporate into your status bar:
 
 ```bash
 set -g status-right "#{pomodoro_status}"
 ```
 
-### Default keybindings
-- `<tmux-prefix> p` to start a pomodoro
-- `<tmux-prefix> P` to cancel a pomodoro
-- `<tmux-prefix> C-p` to invoke pomodoro timer menu
-- `<tmux-prefix> M-p` to input custom pomodoro timer
-
-> **Note:** The custom pomodoro duration is always `<ctrl> + [your start pomodoro key]`
-
 ## :wrench: Configuration
-The default configuration is:
+The default configuration:
 
 ```bash
 set -g @pomodoro_start 'p'                  # Start a Pomodoro with tmux-prefix + p
@@ -75,7 +80,7 @@ set -g @pomodoro_break_mins 5               # The duration of the break after th
 set -g @pomodoro_on " 🍅"                   # The formatted output when the pomodoro is running
 set -g @pomodoro_complete " ✅"             # The formatted output when the break is running
 
-set -g @pomodoro_notifications 'off'        # Turn on/off desktop notifications from your terminal
+set -g @pomodoro_notifications 'off'        # Enable desktop notifications from your terminal
 set -g @pomodoro_sound 'off'                # Sound for desktop notifications (Run `ls /System/Library/Sounds` for a list of sounds to use on Mac)
 ```
 
@@ -84,8 +89,8 @@ set -g @pomodoro_sound 'off'                # Sound for desktop notifications (R
 The output from the plugin can be completely customised to fit in with your status line. For example:
 
 ```bash
-set -g @pomodoro_on " #[fg=$text_red]🍅 "
-set -g @pomodoro_complete " #[fg=$text_green]🍅 "
+set -g @pomodoro_on "#[fg=$text_red]🍅 "
+set -g @pomodoro_complete "#[fg=$text_green]🍅 "
 ```
 
 ## :microscope: How it works
