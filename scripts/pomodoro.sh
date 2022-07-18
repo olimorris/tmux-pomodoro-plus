@@ -1,12 +1,15 @@
 #!/usr/bin/env bash
-
-################################# SET VARIABLES ################################
+# ______________________________________________________________| locals |__ ;
 
 CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+POMODORO_DIR="/tmp"
+POMODORO_FILE="$POMODORO_DIR/pomodoro.txt"
+POMODORO_STATUS_FILE="$POMODORO_DIR/pomodoro_status.txt"
+POMODORO_MINS_FILE="$CURRENT_DIR/user_mins.txt";
+POMODORO_BREAK_MINS_FILE="$CURRENT_DIR/user_break_mins.txt"
 
 pomodoro_duration_minutes="@pomodoro_mins"
 pomodoro_break_minutes="@pomodoro_break_mins"
-
 pomodoro_on="@pomodoro_on"
 pomodoro_complete="@pomodoro_complete"
 pomodoro_notifcations="@pomodoro_notifications"
@@ -14,13 +17,9 @@ pomodoro_sound="@pomodoro_sound"
 pomodoro_on_default=" 🍅"
 pomodoro_complete_default=" ✅"
 
-POMODORO_DIR="/tmp"
-POMODORO_FILE="$POMODORO_DIR/pomodoro.txt"
-POMODORO_STATUS_FILE="$POMODORO_DIR/pomodoro_status.txt"
+# _____________________________________________________________| methods |__ ;
 
 source $CURRENT_DIR/helpers.sh
-
-################################# FUNCTIONALITY ################################
 
 get_pomodoro_duration() {
 	get_tmux_option "$pomodoro_duration_minutes" "25"
@@ -34,34 +33,17 @@ get_seconds() {
 	date +%s
 }
 
+get_current_dir() {
+	poop="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+	echo $poop
+}
+
 get_notifications() {
 	get_tmux_option "$pomodoro_notifcations" "off"
 }
 
 get_sound() {
 	get_tmux_option "$pomodoro_sound" "off"
-}
-
-write_to_file() {
-	local data=$1
-	local file=$2
-	echo "$data" >"$file"
-}
-
-read_file() {
-	local file=$1
-	if [ -f $1 ]; then
-		cat $1
-	else
-		echo -1
-	fi
-}
-
-remove_file() {
-	local file=$1
-	if [ -f $file ]; then
-		rm $file
-	fi
 }
 
 if_inside_tmux() {
@@ -75,8 +57,7 @@ send_notification() {
 		local sound=$(get_sound)
 
 		if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-			notify-send -t 5000 "$title" "$message"
-
+			notify-send -t 8000 "$title" "$message"
 		elif [[ "$OSTYPE" == "darwin"* ]]; then
 			if [[ sound == "on" ]]; then
 				osascript -e 'display notification "'"$message"'" with title "'"$title"'" sound name "'"$sound"'"'
@@ -97,6 +78,7 @@ pomodoro_start() {
 	clean_env
 	mkdir -p $POMODORO_DIR
 	write_to_file $(get_seconds) $POMODORO_FILE
+
 	send_notification "🍅 Pomodoro started!" "Your Pomodoro is underway"
 	if_inside_tmux && tmux refresh-client -S
 	return 0
@@ -109,8 +91,40 @@ pomodoro_cancel() {
 	return 0
 }
 
-pomodoro_manual() {
-	tmux command-prompt -p 'Pomodoro duration (mins):' 'set -g @pomodoro_mins %1'
+pomodoro_custom() {
+	tmux command-prompt \
+		-I "$(get_pomodoro_duration), $(get_pomodoro_break)" \
+		-p 'Pomodoro duration (mins):, Break duration (mins):' \
+		"set -g @pomodoro_mins %1;
+		 set -g @pomodoro_break_mins %2;
+		 run-shell 'echo %1 > $POMODORO_MINS_FILE';
+		 run-shell 'echo %2 > $POMODORO_BREAK_MINS_FILE'
+		"
+}
+
+pomodoro_menu() {
+	local pomodoro_menu_position=$(get_tmux_option @pomodoro_menu_position "R")
+
+	tmux display-menu -y S -x $pomodoro_menu_position -T " Pomodoro Duration " \
+		"$(get_pomodoro_duration) minutes (default)" "" "set -g @pomodoro_mins $(get_pomodoro_duration)" \
+		""  \
+		"15 minutes" "" "set -g @pomodoro_mins 15; run-shell 'echo 15 > $POMODORO_MINS_FILE'" \
+		"20 minutes" "" "set -g @pomodoro_mins 20; run-shell 'echo 20 > $POMODORO_MINS_FILE'" \
+		"25 minutes" "" "set -g @pomodoro_mins 25; run-shell 'echo 25 > $POMODORO_MINS_FILE'" \
+		"30 minutes" "" "set -g @pomodoro_mins 30; run-shell 'echo 30 > $POMODORO_MINS_FILE'" \
+		"40 minutes" "" "set -g @pomodoro_mins 40; run-shell 'echo 40 > $POMODORO_MINS_FILE'"
+
+	tmux display-menu -y S -x $pomodoro_menu_position -T " Break " \
+		"" \
+		"5 minutes"  "" "set -g @pomodoro_break_mins 5 ; run-shell 'echo 5  > $POMODORO_BREAK_MINS_FILE'" \
+		"10 minutes" "" "set -g @pomodoro_break_mins 10; run-shell 'echo 10 > $POMODORO_BREAK_MINS_FILE'" \
+		"15 minutes" "" "set -g @pomodoro_break_mins 15; run-shell 'echo 15 > $POMODORO_BREAK_MINS_FILE'" \
+		"20 minutes" "" "set -g @pomodoro_break_mins 20; run-shell 'echo 20 > $POMODORO_BREAK_MINS_FILE'" \
+		"30 minutes" "" "set -g @pomodoro_break_mins 30; run-shell 'echo 30 > $POMODORO_BREAK_MINS_FILE'"
+
+	tmux display-menu -y S -x $pomodoro_menu_position -T " Start New Pomodoro? " \
+		"yes" "" "run-shell '$CURRENT_DIR/pomodoro.sh start'" \
+		"no" "" ""
 }
 
 pomodoro_status() {
@@ -127,6 +141,7 @@ pomodoro_status() {
 		if [ $pomodoro_status == 'on_break' ]; then
 			send_notification "🍅 Break finished!" "Your Pomodoro break is now over"
 			write_to_file "break_complete" "$POMODORO_STATUS_FILE"
+
 		fi
 	elif [ $difference -ge $(get_pomodoro_duration) ]; then
 		if [ $pomodoro_status -eq -1 ]; then
@@ -147,8 +162,10 @@ main() {
 		pomodoro_start
 	elif [ "$cmd" = "cancel" ]; then
 		pomodoro_cancel
-	elif [ "$cmd" = "manual" ]; then
-		pomodoro_manual
+	elif [ "$cmd" = "menu" ]; then
+		pomodoro_menu
+	elif [ "$cmd" = "custom" ]; then
+		pomodoro_custom
 	else
 		pomodoro_status
 	fi
