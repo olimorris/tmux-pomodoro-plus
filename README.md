@@ -57,7 +57,8 @@ set -g status-right "#{pomodoro_status}"
 ### Default keybindings
 - `<tmux-prefix> p` to start a pomodoro
 - `<tmux-prefix> P` to cancel a pomodoro
-- `<tmux-prefix> C-p` to set a custom pomodoro duration
+- `<tmux-prefix> C-p` to invoke pomodoro timer menu
+- `<tmux-prefix> M-p` to input custom pomodoro timer
 
 > **Note:** The custom pomodoro duration is always `<ctrl> + [your start pomodoro key]`
 
