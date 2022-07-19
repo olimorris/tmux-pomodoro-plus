@@ -59,10 +59,10 @@ send_notification() {
 		if [[ "$OSTYPE" == "linux-gnu"* ]]; then
 			notify-send -t 8000 "$title" "$message"
 		elif [[ "$OSTYPE" == "darwin"* ]]; then
-			if [[ sound == "on" ]]; then
-				osascript -e 'display notification "'"$message"'" with title "'"$title"'" sound name "'"$sound"'"'
-			else
+			if [[ sound == "off" ]]; then
 				osascript -e 'display notification "'"$message"'" with title "'"$title"'"'
+			else
+				osascript -e 'display notification "'"$message"'" with title "'"$title"'" sound name "'"$sound"'"'
 			fi
 		fi
 
