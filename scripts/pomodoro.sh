@@ -33,11 +33,6 @@ get_seconds() {
 	date +%s
 }
 
-get_current_dir() {
-	poop="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-	echo $poop
-}
-
 get_notifications() {
 	get_tmux_option "$pomodoro_notifcations" "off"
 }
