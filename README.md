@@ -84,6 +84,8 @@ set -g @pomodoro_notifications 'off'        # Enable desktop notifications from 
 set -g @pomodoro_sound 'off'                # Sound for desktop notifications (Run `ls /System/Library/Sounds` for a list of sounds to use on Mac)
 ```
 
+> **Note:** On Linux, notifications depend on `notify-send/libnotify-bin`
+
 ### Customising the status line
 
 The output from the plugin can be completely customised to fit in with your status line. For example:
