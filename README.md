@@ -1,8 +1,8 @@
-# Tmux Pomodoro Plus
-
 <p align="center">
 <img src="https://user-images.githubusercontent.com/9512444/179077304-a6c31ccb-ad8f-41d9-97f8-f09a1c4935ad.png" alt="Tmux Pomodoro Plus" />
 </p>
+
+<h1 align="center">Tmux Pomodoro Plus</h1>
 
 <p align="center">
 Incorporate the <a href="https://en.wikipedia.org/wiki/Pomodoro_Technique">Pomodoro technique</a> into your <a href="https://github.com/tmux/tmux">tmux</a> setup. Forked from <a href="https://github.com/alexanderjeurissen/tmux-pomodoro">Tmux Pomodoro</a>
