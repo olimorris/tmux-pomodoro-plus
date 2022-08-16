@@ -5,6 +5,12 @@
 <h1 align="center">Tmux Pomodoro Plus</h1>
 
 <p align="center">
+<a href="https://github.com/olimorris/tmux-pomodoro-plus/stargazers"><img src="https://img.shields.io/github/stars/olimorris/tmux-pomodoro-plus?color=c678dd&logoColor=e06c75&style=for-the-badge"></a>
+<a href="https://github.com/olimorris/tmux-pomodoro-plus/issues"><img src="https://img.shields.io/github/issues/olimorris/tmux-pomodoro-plus?color=%23d19a66&style=for-the-badge"></a>
+<a href="https://github.com/olimorris/tmux-pomodoro-plus/blob/main/LICENSE.md"><img src="https://img.shields.io/github/license/olimorris/tmux-pomodoro-plus?style=for-the-badge"></a>
+</p>
+
+<p align="center">
 Incorporate the <a href="https://en.wikipedia.org/wiki/Pomodoro_Technique">Pomodoro technique</a> into your <a href="https://github.com/tmux/tmux">tmux</a> setup. Forked from <a href="https://github.com/alexanderjeurissen/tmux-pomodoro">Tmux Pomodoro</a>
 </p>
 
