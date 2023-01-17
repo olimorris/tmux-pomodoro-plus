@@ -1,11 +1,10 @@
 #!/usr/bin/env bash
 # ______________________________________________________________| locals |__ ;
-
 CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 POMODORO_DIR="/tmp"
 POMODORO_FILE="$POMODORO_DIR/pomodoro.txt"
 POMODORO_STATUS_FILE="$POMODORO_DIR/pomodoro_status.txt"
-POMODORO_MINS_FILE="$CURRENT_DIR/user_mins.txt";
+POMODORO_MINS_FILE="$CURRENT_DIR/user_mins.txt"
 POMODORO_BREAK_MINS_FILE="$CURRENT_DIR/user_break_mins.txt"
 
 pomodoro_duration_minutes="@pomodoro_mins"
@@ -19,7 +18,7 @@ pomodoro_complete_default=" ✅"
 
 # _____________________________________________________________| methods |__ ;
 
-source $CURRENT_DIR/helpers.sh
+source "$CURRENT_DIR/helpers.sh"
 
 get_pomodoro_duration() {
 	get_tmux_option "$pomodoro_duration_minutes" "25"
@@ -46,15 +45,16 @@ if_inside_tmux() {
 }
 
 send_notification() {
-	if [ $(get_notifications) == 'on' ]; then
+	if [ "$(get_notifications)" == 'on' ]; then
 		local title=$1
 		local message=$2
-		local sound=$(get_sound)
+		sound=$(get_sound)
+		export sound
 
 		if [[ "$OSTYPE" == "linux-gnu"* ]]; then
 			notify-send -t 8000 "$title" "$message"
 		elif [[ "$OSTYPE" == "darwin"* ]]; then
-			if [[ sound == "off" ]]; then
+			if [[ "$sound" == "off" ]]; then
 				osascript -e 'display notification "'"$message"'" with title "'"$title"'"'
 			else
 				osascript -e 'display notification "'"$message"'" with title "'"$title"'" sound name "'"$sound"'"'
@@ -69,10 +69,19 @@ clean_env() {
 	remove_file "$POMODORO_STATUS_FILE"
 }
 
+pomodoro_toggle() {
+	if [ -f "$POMODORO_FILE" ]; then
+		pomodoro_cancel
+		return 0
+	fi
+
+	pomodoro_start
+}
+
 pomodoro_start() {
 	clean_env
 	mkdir -p $POMODORO_DIR
-	write_to_file $(get_seconds) $POMODORO_FILE
+	write_to_file "$(get_seconds)" "$POMODORO_FILE"
 
 	send_notification "🍅 Pomodoro started!" "Your Pomodoro is underway"
 	if_inside_tmux && tmux refresh-client -S
@@ -98,54 +107,61 @@ pomodoro_custom() {
 }
 
 pomodoro_menu() {
-	local pomodoro_menu_position=$(get_tmux_option @pomodoro_menu_position "R")
+	pomodoro_menu_position=$(get_tmux_option @pomodoro_menu_position "R")
+	export pomodoro_menu_position
 
-	tmux display-menu -y S -x $pomodoro_menu_position -T " Pomodoro Duration " \
+	tmux display-menu -y S -x "$pomodoro_menu_position" -T " Pomodoro Duration " \
 		"$(get_pomodoro_duration) minutes (default)" "" "set -g @pomodoro_mins $(get_pomodoro_duration)" \
-		""  \
+		"" \
 		"15 minutes" "" "set -g @pomodoro_mins 15; run-shell 'echo 15 > $POMODORO_MINS_FILE'" \
 		"20 minutes" "" "set -g @pomodoro_mins 20; run-shell 'echo 20 > $POMODORO_MINS_FILE'" \
 		"25 minutes" "" "set -g @pomodoro_mins 25; run-shell 'echo 25 > $POMODORO_MINS_FILE'" \
 		"30 minutes" "" "set -g @pomodoro_mins 30; run-shell 'echo 30 > $POMODORO_MINS_FILE'" \
 		"40 minutes" "" "set -g @pomodoro_mins 40; run-shell 'echo 40 > $POMODORO_MINS_FILE'"
 
-	tmux display-menu -y S -x $pomodoro_menu_position -T " Break " \
+	tmux display-menu -y S -x "$pomodoro_menu_position" -T " Break " \
 		"" \
-		"5 minutes"  "" "set -g @pomodoro_break_mins 5 ; run-shell 'echo 5  > $POMODORO_BREAK_MINS_FILE'" \
+		"5 minutes" "" "set -g @pomodoro_break_mins 5 ; run-shell 'echo 5  > $POMODORO_BREAK_MINS_FILE'" \
 		"10 minutes" "" "set -g @pomodoro_break_mins 10; run-shell 'echo 10 > $POMODORO_BREAK_MINS_FILE'" \
 		"15 minutes" "" "set -g @pomodoro_break_mins 15; run-shell 'echo 15 > $POMODORO_BREAK_MINS_FILE'" \
 		"20 minutes" "" "set -g @pomodoro_break_mins 20; run-shell 'echo 20 > $POMODORO_BREAK_MINS_FILE'" \
 		"30 minutes" "" "set -g @pomodoro_break_mins 30; run-shell 'echo 30 > $POMODORO_BREAK_MINS_FILE'"
 
-	tmux display-menu -y S -x $pomodoro_menu_position -T " Start New Pomodoro? " \
+	tmux display-menu -y S -x "$pomodoro_menu_position" -T " Start New Pomodoro? " \
 		"yes" "" "run-shell '$CURRENT_DIR/pomodoro.sh start'" \
 		"no" "" ""
 }
 
 pomodoro_status() {
-	local pomodoro_start_time=$(read_file "$POMODORO_FILE")
-	local pomodoro_status=$(read_file "$POMODORO_STATUS_FILE")
-	local current_time=$(get_seconds)
-	local difference=$((($current_time - $pomodoro_start_time) / 60))
+	pomodoro_start_time=$(read_file "$POMODORO_FILE")
+	export pomodoro_start_time
 
-	if [ $pomodoro_start_time -eq -1 ]; then
+	pomodoro_status=$(read_file "$POMODORO_STATUS_FILE")
+	export pomodoro_status
+
+	current_time=$(get_seconds)
+	export current_time
+
+	local difference=$(((current_time - pomodoro_start_time) / 60))
+
+	if [ "$pomodoro_start_time" -eq -1 ]; then
 		echo ""
 	elif [ $difference -ge $(($(get_pomodoro_duration) + $(get_pomodoro_break))) ]; then
 		pomodoro_start_time=-1
 		echo ""
-		if [ $pomodoro_status == 'on_break' ]; then
+		if [ "$pomodoro_status" == 'on_break' ]; then
 			send_notification "🍅 Break finished!" "Your Pomodoro break is now over"
 			write_to_file "break_complete" "$POMODORO_STATUS_FILE"
 
 		fi
-	elif [ $difference -ge $(get_pomodoro_duration) ]; then
-		if [ $pomodoro_status -eq -1 ]; then
+	elif [ $difference -ge "$(get_pomodoro_duration)" ]; then
+		if [ "$pomodoro_status" -eq -1 ]; then
 			send_notification "🍅 Pomodoro completed!" "Your Pomodoro has now completed"
 			write_to_file "on_break" "$POMODORO_STATUS_FILE"
 		fi
-		printf "$(get_tmux_option "$pomodoro_complete" "$pomodoro_complete_default")$((-($difference - $(get_pomodoro_duration) - $(get_pomodoro_break))))m "
+		printf "$(get_tmux_option "$pomodoro_complete" "$pomodoro_complete_default")$((-(difference - $(get_pomodoro_duration) - $(get_pomodoro_break))))m "
 	else
-		printf "$(get_tmux_option "$pomodoro_on" "$pomodoro_on_default")$(($(get_pomodoro_duration) - $difference))m "
+		printf "$(get_tmux_option "$pomodoro_on" "$pomodoro_on_default")$(($(get_pomodoro_duration) - difference))m "
 	fi
 }
 
@@ -153,10 +169,10 @@ main() {
 	cmd=$1
 	shift
 
-	if [ "$cmd" = "start" ]; then
+	if [ "$cmd" = "toggle" ]; then
+		pomodoro_toggle
+	elif [ "$cmd" = "start" ]; then
 		pomodoro_start
-	elif [ "$cmd" = "cancel" ]; then
-		pomodoro_cancel
 	elif [ "$cmd" = "menu" ]; then
 		pomodoro_menu
 	elif [ "$cmd" = "custom" ]; then
@@ -166,4 +182,4 @@ main() {
 	fi
 }
 
-main $@
+main "$@"
