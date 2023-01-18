@@ -51,7 +51,7 @@ Pomodoro timer menu:
 set -g @plugin 'olimorris/tmux-pomodoro-plus'
 ```
 
-> Note: The above line should be *before* `run '~/.tmux/plugins/tpm/tpm'`
+> :bangbang: The above line should be *before* `run '~/.tmux/plugins/tpm/tpm'`
 
 2. Then press `prefix` + <kbd>I</kbd> (capital i, as in **I**nstall) to fetch the plugin as per the TPM installation instructions
 
@@ -63,7 +63,9 @@ set -g @plugin 'olimorris/tmux-pomodoro-plus'
 - `<tmux-prefix> C-p` to open the pomodoro timer menu
 - `<tmux-prefix> M-p` to set a custom pomodoro timer
 
-> **Note:** The pomodoro timer menu and custom pomodoro input is always `<ctrl> + [your start pomodoro key]`
+It's also possible to bind start and cancel to the same key.
+
+> :bangbang: The pomodoro timer menu and custom pomodoro input are always `<ctrl>/<alt> + [your start pomodoro key]`
 
 ### Status bar
 
@@ -90,7 +92,7 @@ set -g @pomodoro_notifications 'off'        # Enable desktop notifications from 
 set -g @pomodoro_sound 'off'                # Sound for desktop notifications (Run `ls /System/Library/Sounds` for a list of sounds to use on Mac)
 ```
 
-> **Note:** On Linux, notifications depend on `notify-send/libnotify-bin`
+> :bangbang: On Linux, notifications depend on `notify-send/libnotify-bin`
 
 ### Customising the status line
 
