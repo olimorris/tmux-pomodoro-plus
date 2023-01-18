@@ -11,7 +11,7 @@ pomodoro_duration_minutes="@pomodoro_mins"
 pomodoro_break_minutes="@pomodoro_break_mins"
 pomodoro_on="@pomodoro_on"
 pomodoro_complete="@pomodoro_complete"
-pomodoro_notifcations="@pomodoro_notifications"
+pomodoro_notifications="@pomodoro_notifications"
 pomodoro_sound="@pomodoro_sound"
 pomodoro_on_default=" 🍅"
 pomodoro_complete_default=" ✅"
@@ -33,7 +33,7 @@ get_seconds() {
 }
 
 get_notifications() {
-	get_tmux_option "$pomodoro_notifcations" "off"
+	get_tmux_option "$pomodoro_notifications" "off"
 }
 
 get_sound() {
