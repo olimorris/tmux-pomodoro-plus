@@ -14,17 +14,6 @@
 Incorporate the <a href="https://en.wikipedia.org/wiki/Pomodoro_Technique">Pomodoro technique</a> into your <a href="https://github.com/tmux/tmux">tmux</a> setup. Forked from <a href="https://github.com/alexanderjeurissen/tmux-pomodoro">Tmux Pomodoro</a>
 </p>
 
-## :book: Table of Contents
-
-- [Features](#sparkles-features)
-- [Screenshots](#camera-screenshots)
-- [Installation](#package-installation)
-- [Usage](#rocket-usage)
-- [Configuration](#wrench-configuration)
-- [How it works](#microscope-how-it-works)
-- [Thanks](#clap-thanks)
-- [License](#page_with_curl-license)
-
 ## :sparkles: Features
 - Toggle pomodoro timer on/off and see the countdown in the status bar
 - Upon completion of a pomodoro, see a break countdown in the status bar
@@ -63,9 +52,9 @@ set -g @plugin 'olimorris/tmux-pomodoro-plus'
 - `<tmux-prefix> C-p` to open the pomodoro timer menu
 - `<tmux-prefix> M-p` to set a custom pomodoro timer
 
-It's also possible to bind start and cancel to the same key.
+The pomodoro timer menu and custom pomodoro input are always `<ctrl>/<alt> + [your start pomodoro key]`.
 
-> :bangbang: The pomodoro timer menu and custom pomodoro input are always `<ctrl>/<alt> + [your start pomodoro key]`
+> :bangbang: It's also possible to bind start and cancel to the same key.
 
 ### Status bar
 
@@ -117,9 +106,7 @@ set -g @pomodoro_complete "#[fg=$text_green]🍅 "
     - Countdown: Compares current timestamp (via `date +%s`) with the start timestamp in `/tmp/pomodoro.txt`
     - Break: Compares the current timestamp with the start timestamp and adds on the break duration
 
-## :clap: Thanks
-
-Thanks to the following people:
+## :clap: Credit
 
 - [Wladyslaw Fedorov](https://dribbble.com/Wladza) - For the squashed tomato image
 - [basaran](https://github.com/basaran) - For the awesome pull request to add the linux notifications and the custom input for the pomodoro duration
