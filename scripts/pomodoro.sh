@@ -9,6 +9,7 @@ POMODORO_BREAK_MINS_FILE="$CURRENT_DIR/user_break_mins.txt"
 
 pomodoro_duration_minutes="@pomodoro_mins"
 pomodoro_break_minutes="@pomodoro_break_mins"
+pomodoro_auto_restart="@pomodoro_auto_restart"
 pomodoro_on="@pomodoro_on"
 pomodoro_complete="@pomodoro_complete"
 pomodoro_notifications="@pomodoro_notifications"
@@ -26,6 +27,10 @@ get_pomodoro_duration() {
 
 get_pomodoro_break() {
 	get_tmux_option "$pomodoro_break_minutes" "5"
+}
+
+get_pomodoro_auto_restart() {
+	get_tmux_option "$pomodoro_auto_restart" false
 }
 
 get_seconds() {
@@ -90,7 +95,9 @@ pomodoro_start() {
 
 pomodoro_cancel() {
 	clean_env
-	send_notification "🍅 Pomodoro cancelled!" "Your Pomodoro was cancelled"
+	if [[ -z $1 ]]; then
+		send_notification "🍅 Pomodoro cancelled!" "Your Pomodoro has been cancelled"
+	fi
 	if_inside_tmux && tmux refresh-client -S
 	return 0
 }
@@ -142,6 +149,9 @@ pomodoro_status() {
 	current_time=$(get_seconds)
 	export current_time
 
+	pomodoro_auto_restart=$(get_pomodoro_auto_restart)
+	export pomodoro_auto_restart
+
 	local difference=$(((current_time - pomodoro_start_time) / 60))
 
 	if [ "$pomodoro_start_time" -eq -1 ]; then
@@ -152,7 +162,12 @@ pomodoro_status() {
 		if [ "$pomodoro_status" == 'on_break' ]; then
 			send_notification "🍅 Break finished!" "Your Pomodoro break is now over"
 			write_to_file "break_complete" "$POMODORO_STATUS_FILE"
-
+			if [ "$pomodoro_auto_restart" = true ]; then
+				pomodoro_start
+			else
+				# Cancel the pomodoro and silence any notifications
+				pomodoro_cancel true
+			fi
 		fi
 	elif [ $difference -ge "$(get_pomodoro_duration)" ]; then
 		if [ "$pomodoro_status" -eq -1 ]; then

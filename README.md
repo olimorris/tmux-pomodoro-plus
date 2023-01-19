@@ -19,6 +19,7 @@ Incorporate the <a href="https://en.wikipedia.org/wiki/Pomodoro_Technique">Pomod
 - Upon completion of a pomodoro, see a break countdown in the status bar
 - Desktop alerts for pomodoro and break completion (macOS and Linux only)
 - Customise the pomodoro duration and break times
+- Automatically repeat your pomodoros
 - Custom keybindings
 
 ## :camera: Screenshots
@@ -68,17 +69,18 @@ set -g status-right "#{pomodoro_status}"
 The default configuration:
 
 ```bash
-set -g @pomodoro_start 'p'                  # Start a Pomodoro with tmux-prefix + p
-set -g @pomodoro_cancel 'P'                 # Cancel a Pomodoro with tmux-prefix key + P
+set -g @pomodoro_start 'p'              # Start a Pomodoro with tmux-prefix + p
+set -g @pomodoro_cancel 'P'             # Cancel a Pomodoro with tmux-prefix key + P
 
-set -g @pomodoro_mins 25                    # The duration of the pomodoro
-set -g @pomodoro_break_mins 5               # The duration of the break after the pomodoro
+set -g @pomodoro_mins 25                # The duration of the pomodoro
+set -g @pomodoro_break_mins 5           # The duration of the break after the pomodoro
+set -g @pomodoro_repeat false               # Auto-repeat the pomodoro? False by default
 
-set -g @pomodoro_on " 🍅"                   # The formatted output when the pomodoro is running
-set -g @pomodoro_complete " ✅"             # The formatted output when the break is running
+set -g @pomodoro_on " 🍅"               # The formatted output when the pomodoro is running
+set -g @pomodoro_complete " ✅"         # The formatted output when the break is running
 
-set -g @pomodoro_notifications 'off'        # Enable desktop notifications from your terminal
-set -g @pomodoro_sound 'off'                # Sound for desktop notifications (Run `ls /System/Library/Sounds` for a list of sounds to use on Mac)
+set -g @pomodoro_notifications 'off'    # Enable desktop notifications from your terminal
+set -g @pomodoro_sound 'off'            # Sound for desktop notifications (Run `ls /System/Library/Sounds` for a list of sounds to use on Mac)
 ```
 
 > :bangbang: On Linux, notifications depend on `notify-send/libnotify-bin`
