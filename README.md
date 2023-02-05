@@ -69,18 +69,19 @@ set -g status-right "#{pomodoro_status}"
 The default configuration:
 
 ```bash
-set -g @pomodoro_start 'p'              # Start a Pomodoro with tmux-prefix + p
-set -g @pomodoro_cancel 'P'             # Cancel a Pomodoro with tmux-prefix key + P
+set -g @pomodoro_start 'p'                  # Start a Pomodoro with tmux-prefix + p
+set -g @pomodoro_cancel 'P'                 # Cancel a Pomodoro with tmux-prefix key + P
 
-set -g @pomodoro_mins 25                # The duration of the pomodoro
-set -g @pomodoro_break_mins 5           # The duration of the break after the pomodoro
+set -g @pomodoro_mins 25                    # The duration of the pomodoro
+set -g @pomodoro_break_mins 5               # The duration of the break after the pomodoro
 set -g @pomodoro_repeat false               # Auto-repeat the pomodoro? False by default
 
-set -g @pomodoro_on " 🍅"               # The formatted output when the pomodoro is running
-set -g @pomodoro_complete " ✅"         # The formatted output when the break is running
+set -g @pomodoro_on " 🍅"                   # The formatted output when the pomodoro is running
+set -g @pomodoro_complete " ✅"             # The formatted output when the break is running
 
-set -g @pomodoro_notifications 'off'    # Enable desktop notifications from your terminal
-set -g @pomodoro_sound 'off'            # Sound for desktop notifications (Run `ls /System/Library/Sounds` for a list of sounds to use on Mac)
+set -g @pomodoro_notifications 'off'        # Enable desktop notifications from your terminal
+set -g @pomodoro_sound 'off'                # Sound for desktop notifications (Run `ls /System/Library/Sounds` for a list of sounds to use on Mac)
+set -g @pomodoro_granularity_seconds 'off'  # Enables MM:SS (ex: 00:10) format instead of the default (ex: 1m)
 ```
 
 > :bangbang: On Linux, notifications depend on `notify-send/libnotify-bin`

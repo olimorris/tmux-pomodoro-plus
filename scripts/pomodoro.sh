@@ -13,6 +13,7 @@ pomodoro_auto_restart="@pomodoro_auto_restart"
 pomodoro_on="@pomodoro_on"
 pomodoro_complete="@pomodoro_complete"
 pomodoro_notifications="@pomodoro_notifications"
+pomodoro_granularity_seconds="@pomodoro_granularity_seconds"
 pomodoro_sound="@pomodoro_sound"
 pomodoro_on_default=" 🍅"
 pomodoro_complete_default=" ✅"
@@ -37,21 +38,26 @@ get_seconds() {
 	date +%s
 }
 
-# Formats seconds to MM:SS format
-# Example 1: 0  sec  => 00:00
-# Example 2: 59 sec => 00:59
-# Example 3: 60 sec => 01:00
 format_seconds() {
-	# TODO: only format it based on option
-	# if [ "$(get_notifications)" == 'on' ]; then
-	# fi
-
 	local total_seconds=$1
 	local minutes=$((total_seconds / 60))
 	local seconds=$((total_seconds % 60))
 
-	# Pad minutes and seconds with zeros if necessary
-	printf "%02d:%02d\n" $minutes $seconds
+	if [ "$(get_pomodoro_granularity_seconds)" == 'on' ]; then
+		# Pad minutes and seconds with zeros if necessary
+		# Formats seconds to MM:SS format
+		# Example 1: 0  sec => 00:00
+		# Example 2: 59 sec => 00:59
+		# Example 3: 60 sec => 01:00
+		printf "%02d:%02d\n" $minutes $seconds
+	else
+		local minutes_rounded=$(((total_seconds + 59) / 60))
+		# Shows minutes only
+		# Example 1: 0  sec => 0m
+		# Example 2: 59 sec => 1m
+		# Example 3: 60 sec => 1m
+		printf "$((minutes_rounded))m"
+	fi
 }
 
 minutes_to_seconds() {
@@ -61,6 +67,10 @@ minutes_to_seconds() {
 
 get_notifications() {
 	get_tmux_option "$pomodoro_notifications" "off"
+}
+
+get_pomodoro_granularity_seconds() {
+	get_tmux_option "$pomodoro_granularity_seconds" "off"
 }
 
 get_sound() {
