@@ -56,7 +56,7 @@ format_seconds() {
 		# Example 1: 0  sec => 0m
 		# Example 2: 59 sec => 1m
 		# Example 3: 60 sec => 1m
-		printf "$((minutes_rounded))m"
+		printf "%sm" "$((minutes_rounded))"
 	fi
 }
 
@@ -188,7 +188,7 @@ pomodoro_status() {
 
 	if [ "$pomodoro_start_time" -eq -1 ]; then
 		echo ""
-	elif [ $difference -ge $(minutes_to_seconds $(($(get_pomodoro_duration) + $(get_pomodoro_break)))) ]; then
+	elif [ $difference -ge "$(minutes_to_seconds $(($(get_pomodoro_duration) + $(get_pomodoro_break))))" ]; then
 		pomodoro_start_time=-1
 		echo ""
 		if [ "$pomodoro_status" == 'on_break' ]; then
@@ -201,20 +201,21 @@ pomodoro_status() {
 				pomodoro_cancel true
 			fi
 		fi
-	elif [ $difference -ge "$(minutes_to_seconds $(get_pomodoro_duration))" ]; then
+	elif [ $difference -ge "$(minutes_to_seconds "$(get_pomodoro_duration)")" ]; then
 		if [ "$pomodoro_status" -eq -1 ]; then
 			send_notification "🍅 Pomodoro completed!" "Your Pomodoro has now completed"
 			write_to_file "on_break" "$POMODORO_STATUS_FILE"
 		fi
 
-		local pomodoro_duration_secs=$(minutes_to_seconds $(get_pomodoro_duration))
-		local break_duration_seconds=$(minutes_to_seconds $(get_pomodoro_break))
-		local time_left_seconds=$((-(difference - pomodoro_duration_secs - break_duration_seconds)))
-		local time_left_formatted=$(format_seconds $time_left_seconds)
+		pomodoro_duration_secs=$(minutes_to_seconds "$(get_pomodoro_duration)")
+		break_duration_seconds=$(minutes_to_seconds "$(get_pomodoro_break)")
+		time_left_seconds=$((-(difference - pomodoro_duration_secs - break_duration_seconds)))
+		time_left_formatted=$(format_seconds $time_left_seconds)
+
 		printf "$(get_tmux_option "$pomodoro_complete" "$pomodoro_complete_default")$time_left_formatted "
 	else
-		local pomodoro_duration_secs=$(minutes_to_seconds $(get_pomodoro_duration))
-		local time_left_formatted=$(format_seconds $((pomodoro_duration_secs - difference)))
+		pomodoro_duration_secs=$(minutes_to_seconds "$(get_pomodoro_duration)")
+		time_left_formatted=$(format_seconds $((pomodoro_duration_secs - difference)))
 		printf "$(get_tmux_option "$pomodoro_on" "$pomodoro_on_default")$time_left_formatted "
 	fi
 }
