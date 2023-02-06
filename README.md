@@ -81,7 +81,8 @@ set -g @pomodoro_complete " ✅"             # The formatted output when the bre
 
 set -g @pomodoro_notifications 'off'        # Enable desktop notifications from your terminal
 set -g @pomodoro_sound 'off'                # Sound for desktop notifications (Run `ls /System/Library/Sounds` for a list of sounds to use on Mac)
-set -g @pomodoro_granularity_seconds 'off'  # Enables MM:SS (ex: 00:10) format instead of the default (ex: 1m)
+
+set -g @pomodoro_granularity 'off'          # Enables MM:SS (ex: 00:10) format instead of the default (ex: 1m)
 ```
 
 > :bangbang: On Linux, notifications depend on `notify-send/libnotify-bin`
@@ -93,6 +94,11 @@ The output from the plugin can be completely customised to fit in with your stat
 ```bash
 set -g @pomodoro_on "#[fg=$text_red]🍅 "
 set -g @pomodoro_complete "#[fg=$text_green]🍅 "
+
+set -g @pomodoro_granularity 'on'
+# Optional - Add this to make sure tmux refreshes the status line every second
+# needed when 'pomodoro_granularity' is 'on'
+set -g status-interval 1
 ```
 
 ## :microscope: How it works

@@ -13,7 +13,7 @@ pomodoro_auto_restart="@pomodoro_auto_restart"
 pomodoro_on="@pomodoro_on"
 pomodoro_complete="@pomodoro_complete"
 pomodoro_notifications="@pomodoro_notifications"
-pomodoro_granularity_seconds="@pomodoro_granularity_seconds"
+pomodoro_granularity="@pomodoro_granularity"
 pomodoro_sound="@pomodoro_sound"
 pomodoro_on_default=" 🍅"
 pomodoro_complete_default=" ✅"
@@ -43,7 +43,7 @@ format_seconds() {
 	local minutes=$((total_seconds / 60))
 	local seconds=$((total_seconds % 60))
 
-	if [ "$(get_pomodoro_granularity_seconds)" == 'on' ]; then
+	if [ "$(get_pomodoro_granularity)" == 'on' ]; then
 		# Pad minutes and seconds with zeros if necessary
 		# Formats seconds to MM:SS format
 		# Example 1: 0  sec => 00:00
@@ -69,8 +69,8 @@ get_notifications() {
 	get_tmux_option "$pomodoro_notifications" "off"
 }
 
-get_pomodoro_granularity_seconds() {
-	get_tmux_option "$pomodoro_granularity_seconds" "off"
+get_pomodoro_granularity() {
+	get_tmux_option "$pomodoro_granularity" "off"
 }
 
 get_sound() {
