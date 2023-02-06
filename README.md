@@ -94,11 +94,13 @@ The output from the plugin can be completely customised to fit in with your stat
 ```bash
 set -g @pomodoro_on "#[fg=$text_red]🍅 "
 set -g @pomodoro_complete "#[fg=$text_green]🍅 "
+```
 
+A more detailed, second by second, countdown can also be enabled in the status line:
+
+```bash
 set -g @pomodoro_granularity 'on'
-# Optional - Add this to make sure tmux refreshes the status line every second
-# needed when 'pomodoro_granularity' is 'on'
-set -g status-interval 1
+set -g status-interval 1            # Refresh the status line every second
 ```
 
 ## :microscope: How it works
