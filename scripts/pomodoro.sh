@@ -13,6 +13,7 @@ pomodoro_auto_restart="@pomodoro_auto_restart"
 pomodoro_on="@pomodoro_on"
 pomodoro_complete="@pomodoro_complete"
 pomodoro_notifications="@pomodoro_notifications"
+pomodoro_granularity="@pomodoro_granularity"
 pomodoro_sound="@pomodoro_sound"
 pomodoro_on_default=" 🍅"
 pomodoro_complete_default=" ✅"
@@ -37,8 +38,39 @@ get_seconds() {
 	date +%s
 }
 
+format_seconds() {
+	local total_seconds=$1
+	local minutes=$((total_seconds / 60))
+	local seconds=$((total_seconds % 60))
+
+	if [ "$(get_pomodoro_granularity)" == 'on' ]; then
+		# Pad minutes and seconds with zeros if necessary
+		# Formats seconds to MM:SS format
+		# Example 1: 0  sec => 00:00
+		# Example 2: 59 sec => 00:59
+		# Example 3: 60 sec => 01:00
+		printf "%02d:%02d\n" $minutes $seconds
+	else
+		local minutes_rounded=$(((total_seconds + 59) / 60))
+		# Shows minutes only
+		# Example 1: 0  sec => 0m
+		# Example 2: 59 sec => 1m
+		# Example 3: 60 sec => 1m
+		printf "%sm" "$((minutes_rounded))"
+	fi
+}
+
+minutes_to_seconds() {
+	local minutes=$1
+	echo $((minutes * 60))
+}
+
 get_notifications() {
 	get_tmux_option "$pomodoro_notifications" "off"
+}
+
+get_pomodoro_granularity() {
+	get_tmux_option "$pomodoro_granularity" "off"
 }
 
 get_sound() {
@@ -152,11 +184,11 @@ pomodoro_status() {
 	pomodoro_auto_restart=$(get_pomodoro_auto_restart)
 	export pomodoro_auto_restart
 
-	local difference=$(((current_time - pomodoro_start_time) / 60))
+	local difference=$((current_time - pomodoro_start_time))
 
 	if [ "$pomodoro_start_time" -eq -1 ]; then
 		echo ""
-	elif [ $difference -ge $(($(get_pomodoro_duration) + $(get_pomodoro_break))) ]; then
+	elif [ $difference -ge "$(minutes_to_seconds $(($(get_pomodoro_duration) + $(get_pomodoro_break))))" ]; then
 		pomodoro_start_time=-1
 		echo ""
 		if [ "$pomodoro_status" == 'on_break' ]; then
@@ -169,14 +201,22 @@ pomodoro_status() {
 				pomodoro_cancel true
 			fi
 		fi
-	elif [ $difference -ge "$(get_pomodoro_duration)" ]; then
+	elif [ $difference -ge "$(minutes_to_seconds "$(get_pomodoro_duration)")" ]; then
 		if [ "$pomodoro_status" -eq -1 ]; then
 			send_notification "🍅 Pomodoro completed!" "Your Pomodoro has now completed"
 			write_to_file "on_break" "$POMODORO_STATUS_FILE"
 		fi
-		printf "$(get_tmux_option "$pomodoro_complete" "$pomodoro_complete_default")$((-(difference - $(get_pomodoro_duration) - $(get_pomodoro_break))))m "
+
+		pomodoro_duration_secs=$(minutes_to_seconds "$(get_pomodoro_duration)")
+		break_duration_seconds=$(minutes_to_seconds "$(get_pomodoro_break)")
+		time_left_seconds=$((-(difference - pomodoro_duration_secs - break_duration_seconds)))
+		time_left_formatted=$(format_seconds $time_left_seconds)
+
+		printf "$(get_tmux_option "$pomodoro_complete" "$pomodoro_complete_default")$time_left_formatted "
 	else
-		printf "$(get_tmux_option "$pomodoro_on" "$pomodoro_on_default")$(($(get_pomodoro_duration) - difference))m "
+		pomodoro_duration_secs=$(minutes_to_seconds "$(get_pomodoro_duration)")
+		time_left_formatted=$(format_seconds $((pomodoro_duration_secs - difference)))
+		printf "$(get_tmux_option "$pomodoro_on" "$pomodoro_on_default")$time_left_formatted "
 	fi
 }
 

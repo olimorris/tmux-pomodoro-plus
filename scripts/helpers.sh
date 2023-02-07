@@ -1,7 +1,9 @@
+#!/usr/bin/env bash
+
 get_tmux_option() {
 	local option=$1
 	local default_value=$2
-	local option_value=$(tmux show-option -gqv "$option")
+	option_value=$(tmux show-option -gqv "$option")
 	if [ -z "$option_value" ]; then
 		echo "$default_value"
 	else
@@ -17,8 +19,8 @@ set_tmux_option() {
 
 read_file() {
 	local file=$1
-	if [ -f $1 ]; then
-		cat $1
+	if [ -f "$1" ]; then
+		cat "$1"
 	else
 		echo -1
 	fi
@@ -26,8 +28,8 @@ read_file() {
 
 remove_file() {
 	local file=$1
-	if [ -f $file ]; then
-		rm $file
+	if [ -f "$file" ]; then
+		rm "$file"
 	fi
 }
 
