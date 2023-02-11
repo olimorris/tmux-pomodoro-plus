@@ -25,10 +25,13 @@ Incorporate the <a href="https://en.wikipedia.org/wiki/Pomodoro_Technique">Pomod
 ## :camera: Screenshots
 
 Pomodoro counting down:
-![Image](https://user-images.githubusercontent.com/9512444/179062001-d75827f6-7142-4bc2-a494-2efd450b2e32.png)
+![Image](https://user-images.githubusercontent.com/9512444/218257051-1cdc4487-7e0a-4d1f-9e70-932028f47d6f.png)
 
 Pomodoro on a break:
-![Image](https://user-images.githubusercontent.com/9512444/179061730-6b1cc2d5-eea4-443a-b19c-80a8f6683b16.png)
+![Image](https://user-images.githubusercontent.com/9512444/218257106-c3f83c7e-a467-4965-adfd-8c0b9b06ad9b.png)
+
+Pomodoro counting down in real-time:
+![Image](https://user-images.githubusercontent.com/9512444/218257132-6aac32d9-6ecb-4192-926c-1c41cb4adc62.gif)
 
 Pomodoro timer menu:
 ![Image](https://user-images.githubusercontent.com/9512444/179624439-c5203dd1-01a9-4bf8-93dc-3da162939a4a.gif)
@@ -96,11 +99,11 @@ set -g @pomodoro_on "#[fg=$text_red]🍅 "
 set -g @pomodoro_complete "#[fg=$text_green]🍅 "
 ```
 
-A more detailed, second by second, countdown can also be enabled in the status line:
+A real-time countdown can also be enabled in the status line:
 
 ```bash
 set -g @pomodoro_granularity 'on'
-set -g status-interval 1            # Refresh the status line every second
+set -g status-interval 1                    # Refresh the status line every second
 ```
 
 ## :microscope: How it works
@@ -117,10 +120,9 @@ set -g status-interval 1            # Refresh the status line every second
     - Countdown: Compares current timestamp (via `date +%s`) with the start timestamp in `/tmp/pomodoro.txt`
     - Break: Compares the current timestamp with the start timestamp and adds on the break duration
 
-## :clap: Credit
+## :clap: Credits
 
 - [Wladyslaw Fedorov](https://dribbble.com/Wladza) - For the squashed tomato image
-- [basaran](https://github.com/basaran) - For the awesome pull request to add the linux notifications and the custom input for the pomodoro duration
 
 ## :page_with_curl: License
 [MIT](https://github.com/olimorris/tmux-pomodoro-plus/blob/master/LICENSE.md)
