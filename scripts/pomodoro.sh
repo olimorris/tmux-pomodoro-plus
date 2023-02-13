@@ -90,6 +90,9 @@ send_notification() {
     case "$OSTYPE" in
       linux* | *bsd*)
         notify-send -t 8000 "$title" "$message"
+        if [[ "$sound" == "on" ]]; then
+          beep -D 1500
+        fi
         ;;
       darwin*)
         if [[ "$sound" == "off" ]]; then
