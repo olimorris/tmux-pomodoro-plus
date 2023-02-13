@@ -87,17 +87,18 @@ send_notification() {
 		local message=$2
 		sound=$(get_sound)
 		export sound
-
-		if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+		case "$OSTYPE" in
+		linux* | *bsd*)
 			notify-send -t 8000 "$title" "$message"
-		elif [[ "$OSTYPE" == "darwin"* ]]; then
+			;;
+		darwin*)
 			if [[ "$sound" == "off" ]]; then
 				osascript -e 'display notification "'"$message"'" with title "'"$title"'"'
 			else
 				osascript -e 'display notification "'"$message"'" with title "'"$title"'" sound name "'"$sound"'"'
 			fi
-		fi
-
+			;;
+		esac
 	fi
 }
 
