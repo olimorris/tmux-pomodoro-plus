@@ -15,6 +15,7 @@ Incorporate the <a href="https://en.wikipedia.org/wiki/Pomodoro_Technique">Pomod
 </p>
 
 ## :sparkles: Features
+
 - Toggle pomodoro timer on/off and see the countdown in the status bar
 - Upon completion of a pomodoro, see a break countdown in the status bar
 - Desktop alerts for pomodoro and break completion (macOS and Linux only)
@@ -44,21 +45,22 @@ Pomodoro timer menu:
 set -g @plugin 'olimorris/tmux-pomodoro-plus'
 ```
 
-> :bangbang: The above line should be *before* `run '~/.tmux/plugins/tpm/tpm'`
+> **Note**: The above line should be _before_ `run '~/.tmux/plugins/tpm/tpm'`
 
-2. Then press `prefix` + <kbd>I</kbd> (capital i, as in **I**nstall) to fetch the plugin as per the TPM installation instructions
+2. Then press `tmux-prefix` + <kbd>I</kbd> (capital i, as in **I**nstall) to fetch the plugin as per the TPM installation instructions
 
 ## :rocket: Usage
 
 ### Default keybindings
+
+> **Note**: It's possible to bind start and cancel to the same key!
+
 - `<tmux-prefix> p` to start a pomodoro/break
 - `<tmux-prefix> P` to cancel a pomodoro
 - `<tmux-prefix> C-p` to open the pomodoro timer menu
 - `<tmux-prefix> M-p` to set a custom pomodoro timer
 
 The pomodoro timer menu and custom pomodoro input are always `<ctrl>/<alt> + [your start pomodoro key]`.
-
-> :bangbang: It's also possible to bind start and cancel to the same key.
 
 ### Status bar
 
@@ -69,6 +71,9 @@ set -g status-right "#{pomodoro_status}"
 ```
 
 ## :wrench: Configuration
+
+> **Note**: On Linux, notifications depend on `notify-send/libnotify-bin`
+
 The default configuration:
 
 ```bash
@@ -90,8 +95,6 @@ set -g @pomodoro_sound 'off'                # Sound for desktop notifications (R
 set -g @pomodoro_granularity 'off'          # Enables MM:SS (ex: 00:10) format instead of the default (ex: 1m)
 ```
 
-> :bangbang: On Linux, notifications depend on `notify-send/libnotify-bin`
-
 ### Customising the status line
 
 The output from the plugin can be completely customised to fit in with your status line. For example:
@@ -99,6 +102,7 @@ The output from the plugin can be completely customised to fit in with your stat
 ```bash
 set -g @pomodoro_on "#[fg=$text_red]🍅 "
 set -g @pomodoro_complete "#[fg=$text_green]🍅 "
+set -g @pomodoro_ask_break "#[fg=$color_gray]🕤 ? "
 ```
 
 A real-time countdown can also be enabled in the status line:
@@ -109,22 +113,24 @@ set -g status-interval 1                    # Refresh the status line every seco
 ```
 
 ## :microscope: How it works
-- Starting a Pomodoro
-    - Uses `date +%s` to get the current timestamp and write to `/tmp/pomodoro.txt`
-    - This allows the app to keep track of the elapsed time
-- Completing a Pomodoro
-    - Writes the status of the pomodoro to `/tmp/pomodoro_status.txt`
-    - This allows the app to know what type of notification to send
-- Cancelling a Pomodoro
-    - Deletes `/tmp/pomodoro.txt`
-    - Deletes `/tmp/pomodoro_status.txt`
-- Getting the status of a Pomodoro
-    - Countdown: Compares current timestamp (via `date +%s`) with the start timestamp in `/tmp/pomodoro.txt`
-    - Break: Compares the current timestamp with the start timestamp and adds on the break duration
+
+- Starting a Pomodoro:
+  - Uses `date +%s` to get the current timestamp and write to `/tmp/pomodoro.txt`
+  - This allows the app to keep track of the elapsed time
+- Completing a Pomodoro:
+  - Writes the status of the pomodoro to `/tmp/pomodoro_status.txt`
+  - This allows the app to know what type of notification to send
+- Cancelling a Pomodoro:
+  - Deletes `/tmp/pomodoro.txt`
+  - Deletes `/tmp/pomodoro_status.txt`
+- Getting the status of a Pomodoro:
+  - Countdown: Compares current timestamp (via `date +%s`) with the start timestamp in `/tmp/pomodoro.txt`
+  - Break: Compares the current timestamp with the start timestamp and adds on the break duration
 
 ## :clap: Credits
 
 - [Wladyslaw Fedorov](https://dribbble.com/Wladza) - For the squashed tomato image
 
 ## :page_with_curl: License
+
 [MIT](https://github.com/olimorris/tmux-pomodoro-plus/blob/master/LICENSE.md)
