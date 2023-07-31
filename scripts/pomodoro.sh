@@ -181,7 +181,7 @@ pomodoro_menu() {
 	pomodoro_menu_position=$(get_tmux_option @pomodoro_menu_position "R")
 	export pomodoro_menu_position
 
-	tmux display-menu -y S -x "$pomodoro_menu_position" -T " Pomodoro Duration " \
+	tmux display-menu -y S -x "$pomodoro_menu_position" -T " Pomodoro " \
 		"$(get_pomodoro_duration) minutes (default)" "" "set -g @pomodoro_mins $(get_pomodoro_duration)" \
 		"" \
 		"15 minutes" "" "set -g @pomodoro_mins 15; run-shell 'echo 15 > $POMODORO_MINS_FILE'" \
@@ -199,9 +199,9 @@ pomodoro_menu() {
 		"20 minutes" "" "set -g @pomodoro_break_mins 20; run-shell 'echo 20 > $POMODORO_BREAK_MINS_FILE'" \
 		"30 minutes" "" "set -g @pomodoro_break_mins 30; run-shell 'echo 30 > $POMODORO_BREAK_MINS_FILE'"
 
-	tmux display-menu -y S -x "$pomodoro_menu_position" -T " Start New Pomodoro? " \
-		"yes" "" "run-shell '$CURRENT_DIR/pomodoro.sh start'" \
-		"no" "" ""
+	tmux display-menu -y S -x "$pomodoro_menu_position" -T " Start Pomodoro? " \
+		"Yes" "" "run-shell '$CURRENT_DIR/pomodoro.sh start'" \
+		"No" "" ""
 }
 
 pomodoro_status() {
