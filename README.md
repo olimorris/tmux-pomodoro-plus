@@ -51,7 +51,7 @@ set -g @plugin 'olimorris/tmux-pomodoro-plus'
 ## :rocket: Usage
 
 ### Default keybindings
-- `<tmux-prefix> p` to start a pomodoro
+- `<tmux-prefix> p` to start a pomodoro/break
 - `<tmux-prefix> P` to cancel a pomodoro
 - `<tmux-prefix> C-p` to open the pomodoro timer menu
 - `<tmux-prefix> M-p` to set a custom pomodoro timer
@@ -72,14 +72,16 @@ set -g status-right "#{pomodoro_status}"
 The default configuration:
 
 ```bash
-set -g @pomodoro_start 'p'                  # Start a Pomodoro with tmux-prefix + p
+set -g @pomodoro_start 'p'                  # Start a Pomodoro or start break with tmux-prefix + p
 set -g @pomodoro_cancel 'P'                 # Cancel a Pomodoro with tmux-prefix key + P
 
 set -g @pomodoro_mins 25                    # The duration of the pomodoro
 set -g @pomodoro_break_mins 5               # The duration of the break after the pomodoro
 set -g @pomodoro_repeat false               # Auto-repeat the pomodoro? False by default
+set -g @pomodoro_auto_start_break true      # Auto-start break when pomodoro end? True by default
 
 set -g @pomodoro_on " 🍅"                   # The formatted output when the pomodoro is running
+set -g @pomodoro_ask_break " 🕤 break?"     # The formatted output when wait to start break
 set -g @pomodoro_complete " ✅"             # The formatted output when the break is running
 
 set -g @pomodoro_notifications 'off'        # Enable desktop notifications from your terminal
