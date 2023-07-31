@@ -106,9 +106,9 @@ send_notification() {
 		case "$OSTYPE" in
 		linux* | *bsd*)
 			notify-send -t 8000 "$title" "$message"
-      if [[ "$sound" == "on" ]]; then
-        beep -D 1500
-      fi
+			if [[ "$sound" == "on" ]]; then
+				beep -D 1500
+			fi
 			;;
 		darwin*)
 			if [[ "$sound" == "off" ]]; then
@@ -132,8 +132,7 @@ pomodoro_toggle() {
 	pomodoro_status=$(read_file "$POMODORO_STATUS_FILE")
 	export pomodoro_status
 
-	if [ "$pomodoro_status" == "waiting_break" ] ;
-	then
+	if [ "$pomodoro_status" == "waiting_break" ]; then
 		# if toggle receive while in waiting_break, start break
 		write_to_file "on_break" "$POMODORO_STATUS_FILE"
 		write_to_file "$(get_seconds)" "$POMODORO_WAITING_BREAK_TIME_FILE"
@@ -230,7 +229,7 @@ pomodoro_status() {
 	pomodoro_duration="$(minutes_to_seconds "$(get_pomodoro_duration)")"
 	break_duration="$(minutes_to_seconds "$(get_pomodoro_break)")"
 
-	if [ "$pomodoro_end_time" != -1 ] ; then
+	if [ "$pomodoro_end_time" != -1 ]; then
 		# waiting for break start
 		local elaps_from_start=$((current_time - pomodoro_start_time - (pomodoro_waiting_break - pomodoro_end_time)))
 	else
@@ -239,8 +238,8 @@ pomodoro_status() {
 	fi
 
 	if [ "$pomodoro_start_time" -eq -1 ]; then
-        # no timer ongoing, return
-        return 0
+		# no timer ongoing, return
+		return 0
 	elif [ $elaps_from_start -ge $((pomodoro_duration + break_duration)) ]; then
 		# break over
 		send_notification "🍅 Break finished!" "Your Pomodoro break is now over"
@@ -257,7 +256,7 @@ pomodoro_status() {
 	elif [ $elaps_from_start -ge "$pomodoro_duration" ]; then
 		# focus time is over
 		if [ "$pomodoro_status" -eq -1 ]; then
-			if [ "$pomodoro_auto_start_break" = false ] ; then
+			if [ "$pomodoro_auto_start_break" = false ]; then
 				# start break
 				write_to_file "on_break" "$POMODORO_STATUS_FILE"
 				pomodoro_status="on_break"
@@ -265,7 +264,7 @@ pomodoro_status() {
 			else
 				# wait user command to start break
 				pomodoro_end_time_file_exist=$(read_file "$POMODORO_END_TIME_FILE")
-				if [ "$pomodoro_end_time_file_exist" -ne 0 ] ; then
+				if [ "$pomodoro_end_time_file_exist" -ne 0 ]; then
 					# keep track of pomodoro end time
 					write_to_file "$(get_seconds)" "$POMODORO_END_TIME_FILE"
 				fi
