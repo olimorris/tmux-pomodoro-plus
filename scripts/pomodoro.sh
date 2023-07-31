@@ -46,6 +46,10 @@ get_pomodoro_auto_restart() {
 	get_tmux_option "$pomodoro_auto_restart" false
 }
 
+get_pomodoro_auto_start_break() {
+	get_tmux_option "$pomodoro_auto_start_break" false
+}
+
 get_seconds() {
 	date +%s
 }
@@ -220,6 +224,9 @@ pomodoro_status() {
 	pomodoro_auto_restart=$(get_pomodoro_auto_restart)
 	export pomodoro_auto_restart
 
+	pomodoro_auto_start_break=$(get_pomodoro_auto_start_break)
+	export pomodoro_auto_start_break
+
 	pomodoro_duration="$(minutes_to_seconds "$(get_pomodoro_duration)")"
 	break_duration="$(minutes_to_seconds "$(get_pomodoro_break)")"
 
@@ -250,7 +257,7 @@ pomodoro_status() {
 	elif [ $elaps_from_start -ge "$pomodoro_duration" ]; then
 		# focus time is over
 		if [ "$pomodoro_status" -eq -1 ]; then
-			if [ "$(get_tmux_option "$pomodoro_auto_start_break")" == "true" ] ; then
+			if [ "$pomodoro_auto_start_break" = false ] ; then
 				# start break
 				write_to_file "on_break" "$POMODORO_STATUS_FILE"
 				pomodoro_status="on_break"
