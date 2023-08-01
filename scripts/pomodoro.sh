@@ -125,7 +125,7 @@ clean_env() {
 	remove_file "$POMODORO_START_FILE"
 	remove_file "$POMODORO_STATUS_FILE"
 	remove_file "$POMODORO_END_TIME_FILE"
-	remove file "$POMODORO_WAITING_BREAK_TIME_FILE"
+	remove_file "$POMODORO_WAITING_BREAK_TIME_FILE"
 }
 
 pomodoro_toggle() {
