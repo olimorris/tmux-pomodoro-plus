@@ -45,7 +45,7 @@ Pomodoro timer menu:
 set -g @plugin 'olimorris/tmux-pomodoro-plus'
 ```
 
-> **Note**: The above line should be _before_ `run '~/.tmux/plugins/tpm/tpm'`
+> **Note:** The above line should be _before_ `run '~/.tmux/plugins/tpm/tpm'`
 
 2. Then press `tmux-prefix` + <kbd>I</kbd> (capital i, as in **I**nstall) to fetch the plugin as per the TPM installation instructions
 
@@ -53,7 +53,7 @@ set -g @plugin 'olimorris/tmux-pomodoro-plus'
 
 ### Default keybindings
 
-> **Note**: It's possible to bind start and cancel to the same key!
+> **Note:** It's possible to bind start and cancel to the same key!
 
 - `<tmux-prefix> p` to start a pomodoro/break
 - `<tmux-prefix> P` to cancel a pomodoro
@@ -72,7 +72,7 @@ set -g status-right "#{pomodoro_status}"
 
 ## :wrench: Configuration
 
-> **Note**: On Linux, notifications depend on `notify-send/libnotify-bin`
+> **Note:** On Linux, notifications depend on `notify-send/libnotify-bin`
 
 The default configuration:
 
