@@ -6,9 +6,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Prepare
-        run: |
-          sudo apt-get install tmux
       - name: Run tests
         uses: sudo-bot/action-shunit2@latest
         with:
