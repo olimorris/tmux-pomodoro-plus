@@ -8,6 +8,7 @@
 <a href="https://github.com/olimorris/tmux-pomodoro-plus/stargazers"><img src="https://img.shields.io/github/stars/olimorris/tmux-pomodoro-plus?color=c678dd&logoColor=e06c75&style=for-the-badge"></a>
 <a href="https://github.com/olimorris/tmux-pomodoro-plus/issues"><img src="https://img.shields.io/github/issues/olimorris/tmux-pomodoro-plus?color=%23d19a66&style=for-the-badge"></a>
 <a href="https://github.com/olimorris/tmux-pomodoro-plus/blob/main/LICENSE.md"><img src="https://img.shields.io/github/license/olimorris/tmux-pomodoro-plus?style=for-the-badge"></a>
+<a href="https://github.com/olimorris/tmux-pomodoro-plus/actions/workflows/test.yml"><img src="https://img.shields.io/github/actions/workflow/status/olimorris/tmux-pomodoro-plus/test.yml?branch=main&label=tests&style=for-the-badge"></a>
 </p>
 
 <p align="center">
