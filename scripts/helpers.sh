@@ -1,12 +1,11 @@
 #!/usr/bin/env bash
 
-tmux="$(which tmux)"
-
 get_tmux_option() {
 	local option="$1"
 	local default_value="$2"
 
-	option_value=$($tmux show-option -gqv "$option")
+	option_value=$(tmux show-option -gqv "$option")
+
 	if [ -z "$option_value" ]; then
 		echo "$default_value"
 	else
@@ -18,13 +17,22 @@ set_tmux_option() {
 	local option="$1"
 	local value="$2"
 
-	$tmux set-option -gq "$option" "$value"
+	tmux set-option -gq "$option" "$value"
+}
+
+file_exists() {
+	local file="$1"
+	if [ -f "$file" ]; then
+		echo 0 # file exists
+	else
+		echo 1 # file does not exist
+	fi
 }
 
 read_file() {
 	local file=$1
-	if [ -f "$1" ]; then
-		cat "$1"
+	if [ -f "$file" ]; then
+		cat "$file"
 	else
 		echo -1
 	fi
