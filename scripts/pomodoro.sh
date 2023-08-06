@@ -268,8 +268,8 @@ pomodoro_status() {
 	current_time=$(get_seconds)
 	export current_time
 
-	local pomodoro_auto_start
 	pomodoro_auto_start=$(get_pomodoro_auto_start)
+	export pomodoro_auto_start
 
 	local pomodoro_duration
 	pomodoro_duration="$(minutes_to_seconds "$(get_pomodoro_duration)")"
@@ -282,7 +282,7 @@ pomodoro_status() {
 
 	if [ "$pomodoro_end_time" != -1 ]; then
 		# Waiting for the user to start a break
-		local elaps_from_start=$((current_time - pomodoro_start_time - (pomodoro_waiting_break - pomodoro_end_time)))
+		local elaps_from_start=$((current_time - pomodoro_start_time - pomodoro_waiting_break - pomodoro_end_time))
 	else
 		# Pomodoro in progress
 		local elaps_from_start=$((current_time - pomodoro_start_time))
@@ -295,14 +295,14 @@ pomodoro_status() {
 	elif { [ "$pomodoro_status" == "on_break" ] && [ "$elaps_from_start" -ge $((pomodoro_duration + break_duration)) ]; } ||
 		{ [ "$pomodoro_status" == "on_long_break" ] && [ "$elaps_from_start" -ge $((pomodoro_duration + long_break_duration)) ]; }; then
 
-		send_notification "🍅 Break finished!" "Your Pomodoro break is now over"
 		write_to_file "break_complete" "$POMODORO_STATUS_FILE"
 
 		if [ "$pomodoro_auto_start" = true ]; then
+			send_notification "🍅 Break finished!" "Your Pomodoro break is now over"
 			pomodoro_start
 		else
-			pomodoro_hold_for_user
 			send_notification "🍅 Break completed!" "Start a new Pomodoro?"
+			pomodoro_hold_for_user
 		fi
 
 		pomodoro_start_time=-1
@@ -324,16 +324,19 @@ pomodoro_status() {
 					write_to_file "on_break" "$POMODORO_STATUS_FILE"
 					pomodoro_status="on_break"
 				fi
-
 			else
 				# Wait for the user to manually start the break
-				pomodoro_end_time_file_exist=$(read_file "$POMODORO_END_TIME_FILE")
-				if [ "$pomodoro_end_time_file_exist" -ne 0 ]; then
+				if [ "$pomodoro_end_time" -ne 0 ]; then
 					write_to_file "$(get_seconds)" "$POMODORO_END_TIME_FILE"
 				fi
 
 				break_hold_for_user
-				send_notification "🍅 Pomodoro completed!" "Start a break?"
+
+				if [ "$intervals_reached" = true ]; then
+					send_notification "🍅 Pomodoro completed!" "Start the long break?"
+				else
+					send_notification "🍅 Pomodoro completed!" "Start a break?"
+				fi
 			fi
 		fi
 
