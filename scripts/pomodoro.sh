@@ -284,7 +284,7 @@ pomodoro_status() {
 	if [ "$pomodoro_start_time" -eq -1 ]; then
 		# Pomodoro not started
 		return 0
-	elif [ "$pomodoro_status" == "on_break" ] && [ "$elaps_from_start" -ge $((pomodoro_duration + break_duration)) ]; then
+	elif [ "$elaps_from_start" -ge $((pomodoro_duration + break_duration)) ]; then
 		# Break completed
 		send_notification "🍅 Break finished!" "Your Pomodoro break is now over"
 		write_to_file "break_complete" "$POMODORO_STATUS_FILE"
@@ -303,12 +303,10 @@ pomodoro_status() {
 				# Start the break
 				if [ "$intervals_reached" = true ]; then
 					# Long break
-					write_to_file "$(get_seconds)" "$POMODORO_END_TIME_FILE"
 					write_to_file "on_long_break" "$POMODORO_STATUS_FILE"
 					pomodoro_status="on_long_break"
 				else
 					# Regular break
-					write_to_file "$(get_seconds)" "$POMODORO_END_TIME_FILE"
 					write_to_file "on_break" "$POMODORO_STATUS_FILE"
 					pomodoro_status="on_break"
 				fi
