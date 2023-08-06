@@ -23,10 +23,10 @@ set_tmux_option() {
 file_exists() {
 	local file="$1"
 	if [ -f "$file" ]; then
-		echo 0 # file exists
-	else
-		echo -1 # file does not exist
+		return 0 # file exists
 	fi
+
+	return 1 # file does not exist
 }
 
 read_file() {
