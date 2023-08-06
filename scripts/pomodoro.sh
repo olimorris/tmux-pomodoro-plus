@@ -253,19 +253,10 @@ pomodoro_menu() {
 pomodoro_status() {
 	# ________________________________________________| set variables |__ ;
 	current_time=$(get_seconds)
-	export current_time
-
-	pomodoro_start_time=$(read_file "$POMODORO_START_FILE")
-	export pomodoro_start_time
-
-	pomodoro_start_delta=$((current_time - pomodoro_start_time))
-	export pomodoro_start_delta
-
-	local pomodoro_length
-	pomodoro_length="$(minutes_to_seconds "$(get_pomodoro_length)")"
-
 	pomodoro_status="$(read_status)"
-	export pomodoro_status
+	pomodoro_start_time=$(read_file "$POMODORO_START_FILE")
+	pomodoro_start_delta=$((current_time - pomodoro_start_time))
+	pomodoro_length="$(minutes_to_seconds "$(get_pomodoro_length)")"
 
 	# _____________________________________________| statusline logic |__ ;
 
