@@ -25,12 +25,12 @@ file_exists() {
 	if [ -f "$file" ]; then
 		echo 0 # file exists
 	else
-		echo 1 # file does not exist
+		echo -1 # file does not exist
 	fi
 }
 
 read_file() {
-	local file=$1
+	local file="$1"
 	if [ -f "$file" ]; then
 		cat "$file"
 	else
@@ -39,15 +39,15 @@ read_file() {
 }
 
 remove_file() {
-	local file=$1
+	local file="$1"
 	if [ -f "$file" ]; then
 		rm "$file"
 	fi
 }
 
 write_to_file() {
-	local data=$1
-	local file=$2
+	local data="$1"
+	local file="$2"
 	echo "$data" >"$file"
 }
 

@@ -20,7 +20,7 @@ test_can_get_status_of_pomodoro() {
 
 test_pomodoro_can_be_stopped() {
 	pomodoro_cancel
-	assertEquals "1" "$(file_exists "$POMODORO_START_FILE")"
+	assertEquals "-1" "$(file_exists "$POMODORO_START_FILE")"
 }
 ###############################################################################
 

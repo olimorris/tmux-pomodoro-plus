@@ -18,10 +18,11 @@ Incorporate the <a href="https://en.wikipedia.org/wiki/Pomodoro_Technique">Pomod
 ## :sparkles: Features
 
 - Toggle pomodoro timer on/off and see the countdown in the status bar
+- Set intervals and trigger a long break
 - Upon completion of a pomodoro, see a break countdown in the status bar
+- Customise the pomodoro duration, break times and intervals
+- Automatically restart your pomodoros
 - Desktop alerts for pomodoro and break completion (macOS and Linux only)
-- Customise the pomodoro duration and break times
-- Automatically repeat your pomodoros
 - Custom keybindings
 
 ## :camera: Screenshots
@@ -83,8 +84,10 @@ set -g @pomodoro_cancel 'P'                 # Cancel a Pomodoro with tmux-prefix
 
 set -g @pomodoro_mins 25                    # The duration of the pomodoro
 set -g @pomodoro_break_mins 5               # The duration of the break after the pomodoro
+set -g @pomodoro_intervals 5                # The number of intervals before a longer break is started
+set -g @pomodoro_long_break_mins 25         # The duration of the long break after the number of intervals are reached
 set -g @pomodoro_repeat false               # Auto-repeat the pomodoro? False by default
-set -g @pomodoro_auto_start_break true      # Auto-start break when pomodoro end? True by default
+set -g @pomodoro_auto_start_break true      # Auto-start the break when the pomodoro ends? True by default
 
 set -g @pomodoro_on " 🍅"                   # The formatted output when the pomodoro is running
 set -g @pomodoro_ask_break " 🕤 break?"     # The formatted output when wait to start break
