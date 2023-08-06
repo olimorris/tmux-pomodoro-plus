@@ -83,14 +83,14 @@ set -g @pomodoro_start 'p'                  # Start a Pomodoro or start break wi
 set -g @pomodoro_cancel 'P'                 # Cancel a Pomodoro with tmux-prefix key + P
 
 set -g @pomodoro_mins 25                    # The duration of the pomodoro
-set -g @pomodoro_break_mins 5               # The duration of the break after the pomodoro
+set -g @pomodoro_break_mins 5               # The duration of the break after the pomodoro completes
 set -g @pomodoro_intervals 5                # The number of intervals before a longer break is started
-set -g @pomodoro_long_break_mins 25         # The duration of the long break after the number of intervals are reached
-set -g @pomodoro_repeat false               # Auto-repeat the pomodoro? False by default
-set -g @pomodoro_auto_start_break true      # Auto-start the break when the pomodoro ends? True by default
+set -g @pomodoro_long_break_mins 25         # The duration of the long break
+set -g @pomodoro_auto_start false           # Automatically (re)start the pomodoros and the breaks? False by default
 
 set -g @pomodoro_on " 🍅"                   # The formatted output when the pomodoro is running
-set -g @pomodoro_ask_break " 🕤 break?"     # The formatted output when wait to start break
+set -g @pomodoro_ask " 🕤 start?"           # The formatted output when waiting to start a pomodoro
+set -g @pomodoro_ask_break " 🕤 break?"     # The formatted output when waiting to start a break
 set -g @pomodoro_complete " ✅"             # The formatted output when the break is running
 
 set -g @pomodoro_notifications 'off'        # Enable desktop notifications from your terminal
