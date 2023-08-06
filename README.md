@@ -86,7 +86,7 @@ set -g @pomodoro_mins 25                    # The duration of the pomodoro
 set -g @pomodoro_break_mins 5               # The duration of the break after the pomodoro completes
 set -g @pomodoro_intervals 5                # The number of intervals before a longer break is started
 set -g @pomodoro_long_break_mins 25         # The duration of the long break
-set -g @pomodoro_auto_start false           # Automatically (re)start the pomodoros and the breaks? False by default
+set -g @pomodoro_prompt_me false            # Prompt the user to start pomodoro's and breaks
 
 set -g @pomodoro_on " 🍅"                   # The formatted output when the pomodoro is running
 set -g @pomodoro_ask " 🕤 start?"           # The formatted output when waiting to start a pomodoro

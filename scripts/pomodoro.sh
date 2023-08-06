@@ -19,7 +19,7 @@ pomodoro_mins="@pomodoro_mins"
 pomodoro_intervals="@pomodoro_intervals"
 pomodoro_long_break="@pomodoro_long_break_mins"
 pomodoro_break="@pomodoro_break_mins"
-pomodoro_auto_start="@pomodoro_auto_start"
+pomodoro_prompt="@pomodoro_prompt_me"
 
 pomodoro_on="@pomodoro_on"
 pomodoro_on_default=" 🍅"
@@ -54,8 +54,8 @@ get_pomodoro_long_break() {
 	get_tmux_option "$pomodoro_long_break" "25"
 }
 
-get_pomodoro_auto_start() {
-	get_tmux_option "$pomodoro_auto_start" false
+get_pomodoro_prompt() {
+	get_tmux_option "$pomodoro_prompt" false
 }
 
 get_seconds() {
@@ -149,6 +149,14 @@ intervals_reached() {
 
 	# If intervals meet the maximum value, delete interval file
 	if [ "$interval_value" -eq "$(get_pomodoro_intervals)" ]; then
+		return 0
+	fi
+
+	return 1
+}
+
+prompt_user() {
+	if [ "$(get_pomodoro_intervals)" == "true" ]; then
 		return 0
 	fi
 
@@ -252,6 +260,7 @@ pomodoro_menu() {
 
 pomodoro_status() {
 	# ________________________________________________| set variables |__ ;
+
 	current_time=$(get_seconds)
 	pomodoro_status="$(read_status)"
 	pomodoro_start_time=$(read_file "$POMODORO_START_FILE")
@@ -261,8 +270,8 @@ pomodoro_status() {
 	# _____________________________________________| statusline logic |__ ;
 
 	# Don't display anything if the pomodoro isn't in progress
-	if [ "$pomodoro_start_time" -eq -1 ]; then
-		return 1
+	if [ "$pomodoro_start_time" -eq 1 ]; then
+		return 0
 	fi
 
 	# Pomodoro in progress
@@ -271,7 +280,7 @@ pomodoro_status() {
 		printf "$(get_tmux_option "$pomodoro_on" "$pomodoro_on_default")$(format_seconds $pomodoro_time_left) "
 	fi
 
-	# Pomodoro completed -> NOT on a break yet
+	# Pomodoro complete
 	if [ "$pomodoro_status" == "in_progress" ] && [ $pomodoro_start_delta -ge "$pomodoro_length" ]; then
 		if intervals_reached; then
 			set_status "long_break"
@@ -281,23 +290,28 @@ pomodoro_status() {
 		send_notification "🍅 Pomodoro completed!" "Your Pomodoro has now completed"
 	fi
 
-	# Pomodoro completed -> ON a break
-	if [ "$pomodoro_status" == "break" ] || [ "$pomodoro_status" == "long_break" ]; then
+	# Break in progress
+	if [ "$pomodoro_status" == "break" ] || [ "$pomodoro_status" == "long_break" ] || [ "$pomodoro_status" == "waiting_break" ]; then
+		# TODO: Prompt the user to start a break
+
 		break_time_left=$((-(pomodoro_start_delta - pomodoro_length - $(break_length))))
 		printf "$(get_tmux_option "$pomodoro_complete" "$pomodoro_complete_default")$(format_seconds $break_time_left) "
 	fi
 
-	# Break completed
+	# Break complete
 	if { [ "$pomodoro_status" == "break" ] || [ "$pomodoro_status" == "long_break" ]; } && [ "$pomodoro_start_delta" -ge $((pomodoro_length + $(break_length))) ]; then
 		if intervals_reached; then
-			send_notification "🍅 Long break finished!" "Your Pomodoro long break is now over"
+			send_notification "🍅 Long break finished!" "Your long break is now over"
 		else
-			send_notification "🍅 Break finished!" "Your Pomodoro break is now over"
+			send_notification "🍅 Break finished!" "Your break is now over"
 		fi
-		pomodoro_start
+		set_status "break_complete"
 	fi
 
-	# FIX: There is a delay when pomodoro completes to break starting
+	if [ "$pomodoro_status" == "break_complete" ]; then
+		# TODO: Prompt the user to start a pomodoro
+		pomodoro_start
+	fi
 }
 
 main() {

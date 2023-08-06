@@ -34,7 +34,7 @@ read_file() {
 	if [ -f "$file" ]; then
 		cat "$file"
 	else
-		echo -1
+		echo 1
 	fi
 }
 
