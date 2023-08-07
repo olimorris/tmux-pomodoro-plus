@@ -56,8 +56,8 @@ debug_log() {
 	# set true to enable log messages
 	# follow the log using "tail -f /tmp/tmux_pomodoro_debug_log/log.txt"
 	if true; then
-		DIR="/tmp/tmux_pomodoro_debug_log/"
-		FILE="log.txt"
+		DIR="/tmp/"
+		FILE="pomodoro.log"
 		mkdir -p $DIR
 		echo "$(date +%T) " "$1" >>"$DIR/$FILE"
 	fi

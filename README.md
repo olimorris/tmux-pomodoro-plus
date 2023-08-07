@@ -47,7 +47,7 @@ Pomodoro timer menu:
 set -g @plugin 'olimorris/tmux-pomodoro-plus'
 ```
 
-> **Note:** The above line should be _before_ `run '~/.tmux/plugins/tpm/tpm'`
+> **Note**: The above line should be _before_ `run '~/.tmux/plugins/tpm/tpm'`
 
 2. Then press `tmux-prefix` + <kbd>I</kbd> (capital i, as in **I**nstall) to fetch the plugin as per the TPM installation instructions
 
@@ -55,7 +55,7 @@ set -g @plugin 'olimorris/tmux-pomodoro-plus'
 
 ### Default keybindings
 
-> **Note:** It's possible to bind start and cancel to the same key!
+> **Note**: It's possible to bind start and cancel to the same key!
 
 - `<tmux-prefix> p` to start a pomodoro/break
 - `<tmux-prefix> P` to cancel a pomodoro
@@ -74,7 +74,7 @@ set -g status-right "#{pomodoro_status}"
 
 ## :wrench: Configuration
 
-> **Note:** On Linux, notifications depend on `notify-send/libnotify-bin`
+> **Note**: On Linux, notifications depend on `notify-send/libnotify-bin`
 
 The default configuration:
 
@@ -86,11 +86,11 @@ set -g @pomodoro_mins 25                    # The duration of the pomodoro
 set -g @pomodoro_break_mins 5               # The duration of the break after the pomodoro completes
 set -g @pomodoro_intervals 5                # The number of intervals before a longer break is started
 set -g @pomodoro_long_break_mins 25         # The duration of the long break
-set -g @pomodoro_prompt_me false            # Prompt the user to start pomodoro's and breaks
+set -g @pomodoro_prompt_me 'off'            # Prompt the user to start pomodoro's and breaks
 
 set -g @pomodoro_on " 🍅"                   # The formatted output when the pomodoro is running
-set -g @pomodoro_ask " 🕤 start?"           # The formatted output when waiting to start a pomodoro
-set -g @pomodoro_ask_break " 🕤 break?"     # The formatted output when waiting to start a break
+set -g @pomodoro_prompt_pomodoro " 🕤 start?"        # The formatted output when waiting to start a pomodoro
+set -g @pomodoro_prompt_break " 🕤 break?"  # The formatted output when waiting to start a break
 set -g @pomodoro_complete " ✅"             # The formatted output when the break is running
 
 set -g @pomodoro_notifications 'off'        # Enable desktop notifications from your terminal
