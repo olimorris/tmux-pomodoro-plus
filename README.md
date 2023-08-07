@@ -86,7 +86,7 @@ set -g @pomodoro_mins 25                    # The duration of the pomodoro
 set -g @pomodoro_break_mins 5               # The duration of the break after the pomodoro completes
 set -g @pomodoro_intervals 5                # The number of intervals before a longer break is started
 set -g @pomodoro_long_break_mins 25         # The duration of the long break
-set -g @pomodoro_prompt_me 'off'            # Prompt the user to start pomodoro's and breaks
+set -g @pomodoro_prompt_me 'off'            # Get prompted to start pomodoros and breaks
 
 set -g @pomodoro_on " 🍅"                   # The formatted output when the pomodoro is running
 set -g @pomodoro_prompt_pomodoro " 🕤 start?"        # The formatted output when waiting to start a pomodoro
@@ -106,7 +106,8 @@ The output from the plugin can be completely customised to fit in with your stat
 ```bash
 set -g @pomodoro_on "#[fg=$text_red]🍅 "
 set -g @pomodoro_complete "#[fg=$text_green]🍅 "
-set -g @pomodoro_ask_break "#[fg=$color_gray]🕤 ? "
+set -g @pomodoro_prompt_pomodoro "#[fg=$color_gray]🕤 ? "
+set -g @pomodoro_prompt_break "#[fg=$color_gray]🕤 ? "
 ```
 
 A real-time countdown can also be enabled in the status line:

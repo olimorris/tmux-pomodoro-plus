@@ -290,12 +290,16 @@ pomodoro_status() {
 		return 0
 	fi
 
-	# Check if the pomodoro has completed
-	if [ $pomodoro_start_delta -ge "$pomodoro_length" ]; then
-		completed=true
-	else
-		completed=false
+	# Display the waiting prompts to the user
+	if [ "$pomodoro_status" == "waiting_pomodoro" ]; then
+		printf "$(get_tmux_option "$pomodoro_prompt_pomodoro" "$pomodoro_prompt_pomodoro_default")"
 	fi
+	if [ "$pomodoro_status" == "waiting_break" ]; then
+		printf "$(get_tmux_option "$pomodoro_prompt_break" "$pomodoro_prompt_break_default")"
+	fi
+
+	# Check if the pomodoro has completed
+	[ $pomodoro_start_delta -ge "$pomodoro_length" ] && completed=true || completed=false
 
 	# Pomodoro in progress
 	if [ "$pomodoro_status" == "in_progress" ] && [ $pomodoro_start_delta -lt "$pomodoro_length" ]; then
@@ -312,11 +316,6 @@ pomodoro_status() {
 	if [ "$completed" = true ] && [ "$pomodoro_status" == "in_progress" ] && prompt_user; then
 		set_status "waiting_break"
 		send_notification "🍅 Pomodoro completed!" "Start the break?"
-	fi
-
-	# Pomodoro complete, prompting the user
-	if [ "$pomodoro_status" == "waiting_break" ]; then
-		printf "$(get_tmux_option "$pomodoro_prompt_break" "$pomodoro_prompt_break_default")"
 	fi
 
 	# Pomodoro complete, waiting for the user to respond to the prompt
@@ -369,10 +368,6 @@ pomodoro_status() {
 			fi
 			pomodoro_start
 		fi
-	fi
-
-	if [ "$pomodoro_status" == "waiting_pomodoro" ]; then
-		printf "$(get_tmux_option "$pomodoro_prompt_pomodoro" "$pomodoro_prompt_pomodoro_default")"
 	fi
 }
 
