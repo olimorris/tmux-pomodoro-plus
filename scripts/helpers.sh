@@ -54,9 +54,9 @@ write_to_file() {
 debug_log() {
 	# add log print into the code (debug_log "hello from tmux_pomodoro_plus)"
 	# set true to enable log messages
-	# follow the log using "tail -f /tmp/tmux_pomodoro_debug_log/log.txt"
+	# follow the log using "tail -f /tmp/pomodoro/pomodoro.log"
 	if true; then
-		DIR="/tmp/"
+		DIR="/tmp/pomodoro"
 		FILE="pomodoro.log"
 		mkdir -p $DIR
 		echo "$(date +%T) " "$1" >>"$DIR/$FILE"

@@ -24,7 +24,6 @@ sync_timers() {
 	if [ "$pomodoro_mins_exists" != "" ]; then
 		remove_file "$POMODORO_MINS_FILE"
 		remove_file "$POMODORO_BREAK_MINS_FILE"
-
 	elif [ -f "$POMODORO_MINS_FILE" ] &&
 		[ -f "$POMODORO_BREAK_MINS_FILE" ]; then
 		set_tmux_option "@pomodoro_mins $(read_file "$POMODORO_MINS_FILE")"
@@ -34,8 +33,6 @@ sync_timers() {
 
 set_bindings() {
 	start_binding=$(get_tmux_option "$start_pomodoro" "$default_start_pomodoro")
-	export start_binding
-
 	for key in $start_binding; do
 		tmux bind-key "$key" run-shell "$CURRENT_DIR/scripts/pomodoro.sh toggle"
 		tmux bind-key "C-$key" run-shell "$CURRENT_DIR/scripts/pomodoro.sh menu"
@@ -43,8 +40,6 @@ set_bindings() {
 	done
 
 	cancel_binding=$(get_tmux_option "$cancel_pomodoro" "$default_cancel_pomodoro")
-	export cancel_binding
-
 	for key in $cancel_binding; do
 		tmux bind-key "$key" run-shell "$CURRENT_DIR/scripts/pomodoro.sh cancel"
 	done
@@ -60,10 +55,7 @@ update_tmux_option() {
 	local option="$1"
 
 	option_value="$(get_tmux_option "$option")"
-	export option_value
-
 	new_option_value="$(do_interpolation "$option_value")"
-	export new_option_value
 
 	set_tmux_option "$option" "$new_option_value"
 }

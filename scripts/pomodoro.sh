@@ -2,7 +2,7 @@
 # _______________________________________________________________| locals |__ ;
 
 CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-POMODORO_DIR="/tmp"
+POMODORO_DIR="/tmp/pomodoro"
 
 # file to track start time of the current pomodoro
 POMODORO_START_FILE="$POMODORO_DIR/pomodoro_start.txt"
@@ -47,7 +47,7 @@ pomodoro_sound="@pomodoro_sound"
 
 source "$CURRENT_DIR/helpers.sh"
 
-get_pomodoro_length() {
+get_pomodoro_duration() {
 	get_tmux_option "$pomodoro_mins" "25"
 }
 
@@ -222,7 +222,6 @@ pomodoro_toggle() {
 }
 
 pomodoro_pause() {
-	remove_file "$POMODORO_RESUMED_FILE"
 	write_to_file "$(get_seconds)" "$POMODORO_PAUSED_FILE"
 	send_notification "🍅 Pomodoro paused!" "Your Pomodoro has been paused"
 }
@@ -235,8 +234,10 @@ pomodoro_paused() {
 }
 
 pomodoro_unpause() {
-	time_paused_for="$(($(get_seconds) - $(read_file "$POMODORO_PAUSED_FILE")))"
+	# Keep a running total of the time paused for
+	time_paused_for="$(($(get_seconds) - $(read_file "$POMODORO_PAUSED_FILE") + $(read_file "$POMODORO_RESUMED_FILE")))"
 	write_to_file "$time_paused_for" "$POMODORO_RESUMED_FILE"
+
 	remove_file "$POMODORO_PAUSED_FILE"
 	send_notification "🍅 Pomodoro resuming!" "Your Pomodoro has resumed"
 }
@@ -247,6 +248,10 @@ time_paused_for() {
 	else
 		echo "0"
 	fi
+}
+
+clean_time_paused_for() {
+	remove_file "$POMODORO_RESUMED_FILE"
 }
 
 pomodoro_start() {
@@ -291,7 +296,7 @@ pomodoro_cancel() {
 
 pomodoro_custom() {
 	tmux command-prompt \
-		-I "$(get_pomodoro_length), $(get_pomodoro_break)" \
+		-I "$(get_pomodoro_duration), $(get_pomodoro_break)" \
 		-p 'Pomodoro duration (mins):, Break duration (mins):' \
 		"set -g @pomodoro_mins %1;
 		 set -g @pomodoro_break_mins %2;
@@ -305,7 +310,7 @@ pomodoro_menu() {
 	export pomodoro_menu_position
 
 	tmux display-menu -y S -x "$pomodoro_menu_position" -T " Pomodoro " \
-		"$(get_pomodoro_length) minutes (default)" "" "set -g @pomodoro_mins $(get_pomodoro_length)" \
+		"$(get_pomodoro_duration) minutes (default)" "" "set -g @pomodoro_mins $(get_pomodoro_duration)" \
 		"" \
 		"15 minutes" "" "set -g @pomodoro_mins 15; run-shell 'echo 15 > $POMODORO_USER_MINS_FILE'" \
 		"20 minutes" "" "set -g @pomodoro_mins 20; run-shell 'echo 20 > $POMODORO_USER_MINS_FILE'" \
@@ -332,10 +337,11 @@ pomodoro_status() {
 
 	current_time=$(get_seconds)
 	pomodoro_status="$(read_status)"
-	pomodoro_start_time=$(read_file "$POMODORO_START_FILE")
-	pomodoro_start_delta=$((current_time - pomodoro_start_time))
-	pomodoro_length="$(minutes_to_seconds "$(get_pomodoro_length)")"
 	time_paused_for="$(time_paused_for)"
+	pomodoro_start_time=$(read_file "$POMODORO_START_FILE")
+	pomodoro_duration="$(minutes_to_seconds "$(get_pomodoro_duration)")"
+
+	elapsed_time=$((current_time - pomodoro_start_time - time_paused_for))
 
 	# _____________________________________________| statusline logic |__ ;
 
@@ -363,18 +369,17 @@ pomodoro_status() {
 	fi
 
 	# Has the Pomodoro completed?
-	[ $pomodoro_start_delta -ge "$pomodoro_length" ] && completed=true || completed=false
+	[ $elapsed_time -ge "$pomodoro_duration" ] && completed=true || completed=false
 
 	# Pomodoro in progress
-	if [ "$pomodoro_status" == "in_progress" ] && [ $pomodoro_start_delta -lt "$pomodoro_length" ]; then
-		time_left="$((pomodoro_length - pomodoro_start_delta + time_paused_for))"
-		# store_time_left "$((pomodoro_length - pomodoro_start_delta))"
-
+	if [ "$pomodoro_status" == "in_progress" ] && [ $elapsed_time -lt "$pomodoro_duration" ]; then
+		time_left="$((pomodoro_duration - elapsed_time))"
 		printf "%s%s" "$(get_tmux_option "$pomodoro_on" "$pomodoro_on_default")" "$(format_seconds $time_left)"
 	fi
 
 	# Pomodoro completed, notifying the user
 	if [ "$completed" = true ] && [ "$pomodoro_status" == "in_progress" ] && ! prompt_user; then
+		clean_time_paused_for # Reset the time paused for
 		send_notification "🍅 Pomodoro completed!" "Starting the break"
 	fi
 
@@ -388,7 +393,7 @@ pomodoro_status() {
 	# Pomodoro completed, waiting for the user to respond to the prompt
 	if file_exists "$POMODORO_PROMPT_BREAK_FILE" && prompt_user; then
 		break_start_time=$(read_file "$POMODORO_PROMPT_BREAK_FILE")
-		pomodoro_start_delta=$((current_time - break_start_time))
+		elapsed_time=$((current_time - break_start_time - time_paused_for))
 	fi
 
 	# Pomodoro completed, starting the break
@@ -404,30 +409,29 @@ pomodoro_status() {
 
 	# Break in progress
 	if [ "$pomodoro_status" == "break" ] || [ "$pomodoro_status" == "long_break" ]; then
-		break_time_left=$((-(pomodoro_start_delta - pomodoro_length - $(break_length))))
+		break_time_left=$((-(elapsed_time - pomodoro_duration - $(break_length))))
 
 		if prompt_user; then
-			break_time_left=$((-(current_time - break_start_time - $(break_length))))
+			break_time_left=$((-(current_time - break_start_time - $(break_length) - time_paused_for)))
 		fi
 
-		break_time_left=$((break_time_left + time_paused_for))
-
+		break_time_left=$((break_time_left))
 		printf "%s%s" "$(get_tmux_option "$pomodoro_complete" "$pomodoro_complete_default")" "$(format_seconds $break_time_left)"
 	fi
 
 	# Break in progress, might be complete
 	if [ "$pomodoro_status" == "break" ] || [ "$pomodoro_status" == "long_break" ]; then
-		[ "$pomodoro_start_delta" -ge $((pomodoro_length + $(break_length))) ] && break_complete=true || break_complete=false
-		# store_time_left "$pomodoro_start_delta"
+		[ "$elapsed_time" -ge $((pomodoro_duration + $(break_length))) ] && break_complete=true || break_complete=false
 
 		if prompt_user; then
-			[ $((current_time - break_start_time + time_paused_for)) -ge "$(break_length)" ] && break_complete=true || break_complete=false
-			# store_time_left "$((break_start_time - current_time + $(break_length)))"
+			[ $((current_time - break_start_time - time_paused_for)) -ge "$(break_length)" ] && break_complete=true || break_complete=false
 		fi
 	fi
 
 	# Break complete
 	if [ "$break_complete" = true ] && { [ "$pomodoro_status" == "break" ] || [ "$pomodoro_status" == "long_break" ]; }; then
+		clean_time_paused_for # Reset the time paused for
+
 		pomodoro_status="break_complete"
 
 		break_message="🍅 Break completed!"
