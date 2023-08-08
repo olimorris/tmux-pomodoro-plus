@@ -10,7 +10,10 @@ clean_env
 #################################### TESTS ####################################
 test_pomodoro_can_start() {
 	pomodoro_start
-	assertEquals "0" "$(file_exists "$POMODORO_START_FILE")"
+	file_exists "$POMODORO_START_FILE"
+	local status=$?
+
+	assertEquals 0 $status
 }
 
 test_can_get_status_of_pomodoro() {
@@ -20,7 +23,10 @@ test_can_get_status_of_pomodoro() {
 
 test_pomodoro_can_be_stopped() {
 	pomodoro_cancel
-	assertEquals "-1" "$(file_exists "$POMODORO_START_FILE")"
+	file_exists "$POMODORO_START_FILE"
+	local status=$?
+
+	assertEquals 1 $status
 }
 ###############################################################################
 
