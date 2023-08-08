@@ -46,7 +46,7 @@ set_bindings() {
 	export cancel_binding
 
 	for key in $cancel_binding; do
-		tmux bind-key "$key" run-shell "$CURRENT_DIR/scripts/pomodoro.sh toggle"
+		tmux bind-key "$key" run-shell "$CURRENT_DIR/scripts/pomodoro.sh cancel"
 	done
 }
 
