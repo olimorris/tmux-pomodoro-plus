@@ -174,9 +174,9 @@ prompt_user() {
 
 break_length() {
 	if intervals_reached; then
-		echo "$(minutes_to_seconds "$(get_pomodoro_long_break)")"
+		minutes_to_seconds "$(get_pomodoro_long_break)"
 	else
-		echo "$(minutes_to_seconds "$(get_pomodoro_break)")"
+		minutes_to_seconds "$(get_pomodoro_break)"
 	fi
 }
 
@@ -292,10 +292,10 @@ pomodoro_status() {
 
 	# Display the waiting prompts to the user
 	if [ "$pomodoro_status" == "waiting_pomodoro" ]; then
-		printf "$(get_tmux_option "$pomodoro_prompt_pomodoro" "$pomodoro_prompt_pomodoro_default")"
+		printf "%s " "$(get_tmux_option "$pomodoro_prompt_pomodoro" "$pomodoro_prompt_pomodoro_default")"
 	fi
 	if [ "$pomodoro_status" == "waiting_break" ]; then
-		printf "$(get_tmux_option "$pomodoro_prompt_break" "$pomodoro_prompt_break_default")"
+		printf "%s " "$(get_tmux_option "$pomodoro_prompt_break" "$pomodoro_prompt_break_default")"
 	fi
 
 	# Check if the pomodoro has completed
@@ -304,7 +304,7 @@ pomodoro_status() {
 	# Pomodoro in progress
 	if [ "$pomodoro_status" == "in_progress" ] && [ $pomodoro_start_delta -lt "$pomodoro_length" ]; then
 		pomodoro_time_left="$((pomodoro_length - pomodoro_start_delta))"
-		printf "$(get_tmux_option "$pomodoro_on" "$pomodoro_on_default")$(format_seconds $pomodoro_time_left) "
+		printf "%s%s " "$(get_tmux_option "$pomodoro_on" "$pomodoro_on_default")" "$(format_seconds $pomodoro_time_left)"
 	fi
 
 	# Pomodoro completed, notifying the user
@@ -341,7 +341,7 @@ pomodoro_status() {
 			break_time_left=$((-(pomodoro_start_delta - pomodoro_length - $(break_length))))
 		fi
 
-		printf "$(get_tmux_option "$pomodoro_complete" "$pomodoro_complete_default")$(format_seconds $break_time_left) "
+		printf "%s%s " "$(get_tmux_option "$pomodoro_complete" "$pomodoro_complete_default")" "$(format_seconds $break_time_left)"
 	fi
 
 	# Break in progress, might be complete
