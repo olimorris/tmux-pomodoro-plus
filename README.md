@@ -12,17 +12,17 @@
 </p>
 
 <p align="center">
-Incorporate the <a href="https://en.wikipedia.org/wiki/Pomodoro_Technique">Pomodoro technique</a> into your <a href="https://github.com/tmux/tmux">tmux</a> setup. Forked from <a href="https://github.com/alexanderjeurissen/tmux-pomodoro">Tmux Pomodoro</a>
+Incorporate the <a href="https://en.wikipedia.org/wiki/Pomodoro_Technique">Pomodoro technique</a> into your <a href="https://github.com/tmux/tmux">tmux</a> setup. Forked from <a href="https://github.com/alexanderjeurissen/tmux-pomodoro">Tmux Pomodoro</a><br><br>Please subscribe to <a href="https://github.com/olimorris/tmux-pomodoro-plus/issues/29">this issue</a> to be notifed of any breaking changes to the plugin
 </p>
 
 ## :sparkles: Features
 
 - Toggle pomodoro timer on/off and see the countdown in the status bar
+- Upon completion of a Pomodoro, see a break countdown in the status bar
 - Set intervals and trigger a long break
-- Upon completion of a pomodoro, see a break countdown in the status bar
-- Customise the pomodoro duration, break times and intervals
-- Automatically restart your pomodoros
-- Desktop alerts for pomodoro and break completion (macOS and Linux only)
+- Customise the Pomodoro duration, break times and intervals
+- Automatically start your Pomodoros
+- Desktop alerts for Pomodoro and break completion (macOS and Linux only)
 - Custom keybindings
 
 ## :camera: Screenshots
@@ -41,7 +41,7 @@ Pomodoro timer menu:
 
 ## :package: Installation
 
-1. Using [TPM](https://github.com/tmux-plugins/tpm), add the following line to your `~/.tmux.conf` file:
+1. Using [tpm](https://github.com/tmux-plugins/tpm), add the following line to your `~/.tmux.conf` file:
 
 ```bash
 set -g @plugin 'olimorris/tmux-pomodoro-plus'
@@ -49,7 +49,7 @@ set -g @plugin 'olimorris/tmux-pomodoro-plus'
 
 > **Note**: The above line should be _before_ `run '~/.tmux/plugins/tpm/tpm'`
 
-2. Then press `tmux-prefix` + <kbd>I</kbd> (capital i, as in **I**nstall) to fetch the plugin as per the TPM installation instructions
+2. Then press `tmux-prefix` + <kbd>I</kbd> (capital i, as in **I**nstall) to fetch the plugin as per the tpm installation instructions
 
 ## :rocket: Usage
 
@@ -57,12 +57,12 @@ set -g @plugin 'olimorris/tmux-pomodoro-plus'
 
 > **Note**: It's possible to bind start and cancel to the same key!
 
-- `<tmux-prefix> p` to start a pomodoro/break
-- `<tmux-prefix> P` to cancel a pomodoro
-- `<tmux-prefix> C-p` to open the pomodoro timer menu
-- `<tmux-prefix> M-p` to set a custom pomodoro timer
+- `<tmux-prefix> p` to toggle between starting/pausing a Pomodoro or a break
+- `<tmux-prefix> P` to cancel a Pomodoro
+- `<tmux-prefix> C-p` to open the Pomodoro timer menu
+- `<tmux-prefix> M-p` to set a custom Pomodoro timer
 
-The pomodoro timer menu and custom pomodoro input are always `<ctrl>/<alt> + [your start pomodoro key]`.
+The Pomodoro timer menu and custom Pomodoro input are always `<ctrl>/<alt> + [your start Pomodoro key]`.
 
 ### Status bar
 
@@ -79,38 +79,45 @@ set -g status-right "#{pomodoro_status}"
 The default configuration:
 
 ```bash
-set -g @pomodoro_start 'p'                  # Start a Pomodoro or start break with tmux-prefix + p
-set -g @pomodoro_cancel 'P'                 # Cancel a Pomodoro with tmux-prefix key + P
+set -g @pomodoro_start 'p'                     # Start a Pomodoro or start break with tmux-prefix + p
+set -g @pomodoro_cancel 'P'                    # Cancel a Pomodoro with tmux-prefix key + P
 
-set -g @pomodoro_mins 25                    # The duration of the pomodoro
-set -g @pomodoro_break_mins 5               # The duration of the break after the pomodoro completes
-set -g @pomodoro_intervals 5                # The number of intervals before a longer break is started
-set -g @pomodoro_long_break_mins 25         # The duration of the long break
-set -g @pomodoro_prompt_me 'off'            # Get prompted to start pomodoros and breaks
+set -g @pomodoro_mins 25                       # The duration of the Pomodoro
+set -g @pomodoro_break_mins 5                  # The duration of the break after the Pomodoro completes
+set -g @pomodoro_intervals 4                   # The number of intervals before a longer break is started
+set -g @pomodoro_long_break_mins 25            # The duration of the long break
+set -g @pomodoro_prompt_me 'off'               # Get prompted to start Pomodoros and breaks
 
-set -g @pomodoro_on " 🍅"                   # The formatted output when the pomodoro is running
-set -g @pomodoro_prompt_pomodoro " 🕤 start?"        # The formatted output when waiting to start a pomodoro
-set -g @pomodoro_prompt_break " 🕤 break?"  # The formatted output when waiting to start a break
-set -g @pomodoro_complete " ✅"             # The formatted output when the break is running
+set -g @pomodoro_on " 🍅"                      # The formatted output when the Pomodoro is running
+set -g @pomodoro_complete " ✔︎"                 # The formatted output when the break is running
+set -g @pomodoro_pause=" ⏸︎"                    # The formatted output when the Pomodoro/break is paused
+set -g @pomodoro_prompt_break " ⏲︎ break?"      # The formatted output when waiting to start a break
+set -g @pomodoro_prompt_pomodoro " ⏱︎ start?"   # The formatted output when waiting to start a Pomodoro
 
-set -g @pomodoro_notifications 'off'        # Enable desktop notifications from your terminal
-set -g @pomodoro_sound 'off'                # Sound for desktop notifications (Run `ls /System/Library/Sounds` for a list of sounds to use on Mac)
-
-set -g @pomodoro_granularity 'off'          # Enables MM:SS (ex: 00:10) format instead of the default (ex: 1m)
+set -g @pomodoro_sound 'off'                   # Sound for desktop notifications (Run `ls /System/Library/Sounds` for a list of sounds to use on Mac)
+set -g @pomodoro_notifications 'off'           # Enable desktop notifications from your terminal
+set -g @pomodoro_granularity 'off'             # Enables MM:SS (ex: 00:10) format instead of the default (ex: 1m)
 ```
 
 ### Customising the status line
 
-The output from the plugin can be completely customised to fit in with your status line. For example:
+The output from the plugin can be customised to fit in with your statusline:
 
 ```bash
 set -g @pomodoro_on "#[fg=$text_red]🍅 "
 set -g @pomodoro_complete "#[fg=$text_green]🍅 "
+set -g @pomodoro_pause "  #[fg=$color_yellow]🍅 "
+set -g @pomodoro_prompt_break "#[fg=$color_green]🕤 ? "
 set -g @pomodoro_prompt_pomodoro "#[fg=$color_gray]🕤 ? "
-set -g @pomodoro_prompt_break "#[fg=$color_gray]🕤 ? "
 ```
 
-A real-time countdown can also be enabled in the status line:
+The current and total number of intervals can be displayed:
+
+```bash
+set -g @pomodoro_show_intervals " #[fg=$color_gray][%s/%s]"
+```
+
+A real-time countdown can be also be displayed:
 
 ```bash
 set -g @pomodoro_granularity 'on'
@@ -119,18 +126,7 @@ set -g status-interval 1                    # Refresh the status line every seco
 
 ## :microscope: How it works
 
-- Starting a Pomodoro:
-  - Uses `date +%s` to get the current timestamp and write to `/tmp/pomodoro.txt`
-  - This allows the app to keep track of the elapsed time
-- Completing a Pomodoro:
-  - Writes the status of the pomodoro to `/tmp/pomodoro_status.txt`
-  - This allows the app to know what type of notification to send
-- Cancelling a Pomodoro:
-  - Deletes `/tmp/pomodoro.txt`
-  - Deletes `/tmp/pomodoro_status.txt`
-- Getting the status of a Pomodoro:
-  - Countdown: Compares current timestamp (via `date +%s`) with the start timestamp in `/tmp/pomodoro.txt`
-  - Break: Compares the current timestamp with the start timestamp and adds on the break duration
+- Todo: Include a graphic
 
 ## :clap: Credits
 
