@@ -17,11 +17,11 @@ Incorporate the <a href="https://en.wikipedia.org/wiki/Pomodoro_Technique">Pomod
 
 ## :sparkles: Features
 
-- Toggle pomodoro timer on/off and see the countdown in the status bar
+- Toggle a Pomodoro timer on/off and see the countdown in the status bar
 - Upon completion of a Pomodoro, see a break countdown in the status bar
-- Set intervals and trigger a long break
+- Pause and resume a Pomodoro or break at any point
 - Customise the Pomodoro duration, break times and intervals
-- Automatically start your Pomodoros
+- Allow your Pomodoros to automatically restart
 - Desktop alerts for Pomodoro and break completion (macOS and Linux only)
 - Custom keybindings
 
