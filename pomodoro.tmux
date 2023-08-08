@@ -13,8 +13,6 @@ cancel_pomodoro="@pomodoro_cancel"
 pomodoro_status="#($CURRENT_DIR/scripts/pomodoro.sh)"
 pomodoro_status_interpolation_string="\#{pomodoro_status}"
 
-# TODO: Add two statuses, one for intervals completed and one for total intervals
-
 # _____________________________________________________________| methods |__ ;
 
 source "$CURRENT_DIR/scripts/helpers.sh"
