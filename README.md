@@ -41,7 +41,7 @@ Pomodoro timer menu:
 
 ## :package: Installation
 
-1. Using [tpm](https://github.com/tmux-plugins/tpm), add the following line to your `~/.tmux.conf` file:
+1. Using [TPM](https://github.com/tmux-plugins/tpm), add the following line to your `~/.tmux.conf` file:
 
 ```bash
 set -g @plugin 'olimorris/tmux-pomodoro-plus'
@@ -49,7 +49,7 @@ set -g @plugin 'olimorris/tmux-pomodoro-plus'
 
 > **Note**: The above line should be _before_ `run '~/.tmux/plugins/tpm/tpm'`
 
-2. Then press `tmux-prefix` + <kbd>I</kbd> (capital i, as in **I**nstall) to fetch the plugin as per the tpm installation instructions
+2. Then press `tmux-prefix` + <kbd>I</kbd> (capital i, as in **I**nstall) to fetch the plugin as per the TPM installation instructions
 
 ## :rocket: Usage
 
@@ -119,7 +119,7 @@ A real-time countdown can be also be displayed:
 
 ```bash
 set -g @pomodoro_granularity 'on'
-set -g status-interval 1                    # Refresh the status line every second
+set -g status-interval 1                       # Refresh the status line every second
 ```
 
 ## :microscope: How it works

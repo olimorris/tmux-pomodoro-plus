@@ -250,7 +250,7 @@ time_paused_for() {
 	fi
 }
 
-clean_time_paused_for() {
+remove_time_paused_file() {
 	remove_file "$POMODORO_RESUMED_FILE"
 }
 
@@ -368,26 +368,30 @@ pomodoro_status() {
 		return
 	fi
 
-	# Has the Pomodoro completed?
-	[ $elapsed_time -ge "$pomodoro_duration" ] && completed=true || completed=false
-
 	# Pomodoro in progress
 	if [ "$pomodoro_status" == "in_progress" ] && [ $elapsed_time -lt "$pomodoro_duration" ]; then
 		time_left="$((pomodoro_duration - elapsed_time))"
 		printf "%s%s" "$(get_tmux_option "$pomodoro_on" "$pomodoro_on_default")" "$(format_seconds $time_left)"
 	fi
 
-	# Pomodoro completed, notifying the user
-	if [ "$completed" = true ] && [ "$pomodoro_status" == "in_progress" ] && ! prompt_user; then
-		clean_time_paused_for # Reset the time paused for
-		send_notification "🍅 Pomodoro completed!" "Starting the break"
-	fi
+	# Has the Pomodoro completed?
+	[ $elapsed_time -ge "$pomodoro_duration" ] && completed=true || completed=false
 
-	# Pomodoro completed, starting the prompt
-	if [ "$completed" = true ] && [ "$pomodoro_status" == "in_progress" ] && prompt_user; then
-		pomodoro_status="waiting_break"
-		set_status "$pomodoro_status"
-		send_notification "🍅 Pomodoro completed!" "Start the break?"
+	# Pomodoro completed
+	if [ "$completed" = true ] && [ "$pomodoro_status" == "in_progress" ]; then
+		remove_time_paused_file
+
+		# Pomodoro completed, notifying the user
+		if ! prompt_user; then
+			send_notification "🍅 Pomodoro completed!" "Starting the break"
+		fi
+
+		# Pomodoro completed, starting the prompt
+		if prompt_user; then
+			pomodoro_status="waiting_break"
+			set_status "$pomodoro_status"
+			send_notification "🍅 Pomodoro completed!" "Start the break?"
+		fi
 	fi
 
 	# Pomodoro completed, waiting for the user to respond to the prompt
@@ -430,7 +434,7 @@ pomodoro_status() {
 
 	# Break complete
 	if [ "$break_complete" = true ] && { [ "$pomodoro_status" == "break" ] || [ "$pomodoro_status" == "long_break" ]; }; then
-		clean_time_paused_for # Reset the time paused for
+		remove_time_paused_file
 
 		pomodoro_status="break_complete"
 
