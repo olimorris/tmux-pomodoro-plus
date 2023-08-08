@@ -357,15 +357,22 @@ pomodoro_status() {
 	if [ "$break_complete" = true ] && { [ "$pomodoro_status" == "break" ] || [ "$pomodoro_status" == "long_break" ]; }; then
 		set_status "break_complete"
 
-		if prompt_user; then
-			set_status "waiting_pomodoro"
-			send_notification "🍅 Break completed!" "Start the pomodoro?"
+		break_message="🍅 Break completed!"
+		long_break_message="🍅 Long break completed!"
+		standard_message="Starting the Pomodoro"
+		prompt_message="Start the Pomodoro?"
+
+		if intervals_reached; then
+			primary_message="$long_break_message"
 		else
-			if intervals_reached; then
-				send_notification "🍅 Long break completed!" "Starting the Pomodoro"
-			else
-				send_notification "🍅 Break completed!" "Starting the Pomodoro"
-			fi
+			primary_message="$break_message"
+		fi
+
+		if prompt_user; then
+			send_notification "$primary_message" "$prompt_message"
+			set_status "waiting_pomodoro"
+		else
+			send_notification "$primary_message" "$standard_message"
 			pomodoro_start
 		fi
 	fi
