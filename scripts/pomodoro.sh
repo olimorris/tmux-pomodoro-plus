@@ -348,7 +348,6 @@ pomodoro_custom() {
 
 pomodoro_menu() {
 	pomodoro_menu_position=$(get_tmux_option @pomodoro_menu_position "R")
-	export pomodoro_menu_position
 
 	tmux display-menu -y S -x "$pomodoro_menu_position" -T " Pomodoro " \
 		"$(get_pomodoro_duration) minutes (default)" "" "set -g @pomodoro_mins $(get_pomodoro_duration)" \
@@ -514,11 +513,13 @@ pomodoro_status() {
 }
 
 main() {
-	cmd=$1
+	cmd="$1"
 	shift
 
 	if [ "$cmd" = "toggle" ]; then
 		pomodoro_toggle
+	elif [ "$cmd" = "start" ]; then
+		pomodoro_start
 	elif [ "$cmd" = "skip" ]; then
 		pomodoro_skip
 	elif [ "$cmd" = "cancel" ]; then
