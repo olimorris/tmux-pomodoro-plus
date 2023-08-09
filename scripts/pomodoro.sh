@@ -4,21 +4,23 @@
 CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 POMODORO_DIR="/tmp/pomodoro"
 
-# file to track start time of the current pomodoro
+# File which records the start time of the Pomodoro
 POMODORO_START_FILE="$POMODORO_DIR/pomodoro_start.txt"
-# files to track time left for any pomodoro or break and to check when a pause is activated
+# File which records what the user skipped
+POMODORO_SKIP_FILE="$POMODORO_DIR/pomodoro_skip.txt"
+# Files to track the time left for a Pomodoro/break and to check when a pause was initiated
 POMODORO_PAUSED_FILE="$POMODORO_DIR/pomodoro_paused.txt"
 POMODORO_RESUMED_FILE="$POMODORO_DIR/pomodoro_resumed.txt"
-# file to track start time of the current break
+# File which records the start time of the current break
 POMODORO_PROMPT_BREAK_FILE="$POMODORO_DIR/pomodoro_break_start.txt"
-# file to track pomodoro intervals
+# File which tracks Pomodoro intervals
 POMODORO_INTERVAL_FILE="$POMODORO_DIR/pomodoro_interval.txt"
-# file to store the pomodoro status
+# File which stores the current status of the Pomodoro/break
 POMODORO_STATUS_FILE="$POMODORO_DIR/pomodoro_status.txt"
 
-# file to store the users custom pomodoro time
+# File which stores the users custom Pomodoro time
 POMODORO_USER_MINS_FILE="$CURRENT_DIR/user_mins.txt"
-# file to store the users custom break time
+# File which stores the users custom break time
 POMODORO_USER_BREAK_MINS_FILE="$CURRENT_DIR/user_break_mins.txt"
 
 pomodoro_mins="@pomodoro_mins"
@@ -37,7 +39,7 @@ pomodoro_prompt_pomodoro="@pomodoro_prompt_pomodoro"
 pomodoro_prompt_pomodoro_default=" ⏱︎ start?"
 pomodoro_prompt_break="@pomodoro_prompt_break"
 pomodoro_prompt_break_default=" ⏲︎ break?"
-pomodoro_show_intervals="@pomodoro_show_intervals"
+pomodoro_interval_display="@pomodoro_interval_display"
 
 pomodoro_notifications="@pomodoro_notifications"
 pomodoro_granularity="@pomodoro_granularity"
@@ -60,7 +62,7 @@ get_pomodoro_intervals() {
 }
 
 show_pomodoro_intervals() {
-	get_tmux_option "$pomodoro_show_intervals" "0"
+	get_tmux_option "$pomodoro_interval_display" "0"
 }
 
 get_pomodoro_long_break() {
@@ -68,7 +70,7 @@ get_pomodoro_long_break() {
 }
 
 get_pomodoro_prompt() {
-	get_tmux_option "$pomodoro_prompt" "off"
+	get_tmux_option "$pomodoro_prompt" "on"
 }
 
 get_seconds() {
@@ -118,6 +120,10 @@ if_inside_tmux() {
 	test -n "${TMUX}"
 }
 
+refresh_statusline() {
+	if_inside_tmux && tmux refresh-client -S
+}
+
 send_notification() {
 	if [ "$(get_notifications)" == 'on' ]; then
 		local title=$1
@@ -143,6 +149,7 @@ send_notification() {
 }
 
 clean_env() {
+	remove_file "$POMODORO_SKIP_FILE"
 	remove_file "$POMODORO_START_FILE"
 	remove_file "$POMODORO_PAUSED_FILE"
 	remove_file "$POMODORO_RESUMED_FILE"
@@ -183,6 +190,19 @@ is_being_prompted() {
 	return 1
 }
 
+skipped_pomodoro() {
+	if [ "$(read_file "$POMODORO_SKIP_FILE")" == "pomodoro" ]; then
+		return 0
+	fi
+	return 1
+}
+skipped_break() {
+	if [ "$(read_file "$POMODORO_SKIP_FILE")" == "break" ]; then
+		return 0
+	fi
+	return 1
+}
+
 break_length() {
 	if intervals_reached; then
 		minutes_to_seconds "$(get_pomodoro_long_break)"
@@ -202,19 +222,19 @@ pomodoro_toggle() {
 	if [ "$(read_status)" == "waiting_break" ]; then
 		write_to_file "$(get_seconds)" "$POMODORO_PROMPT_BREAK_FILE"
 		set_status "initiating_break"
-		if_inside_tmux && tmux refresh-client -S
+		refresh_statusline
 		return 0
 	fi
 
 	if ! is_being_prompted && file_exists "$POMODORO_START_FILE" && ! file_exists "$POMODORO_PAUSED_FILE"; then
 		pomodoro_pause
-		if_inside_tmux && tmux refresh-client -S
+		refresh_statusline
 		return 0
 	fi
 
 	if ! is_being_prompted && file_exists "$POMODORO_PAUSED_FILE"; then
-		pomodoro_unpause
-		if_inside_tmux && tmux refresh-client -S
+		pomodoro_resume
+		refresh_statusline
 		return 0
 	fi
 
@@ -233,7 +253,7 @@ pomodoro_paused() {
 	return 1
 }
 
-pomodoro_unpause() {
+pomodoro_resume() {
 	# Keep a running total of the time paused for
 	time_paused_for="$(($(get_seconds) - $(read_file "$POMODORO_PAUSED_FILE") + $(read_file "$POMODORO_RESUMED_FILE")))"
 	write_to_file "$time_paused_for" "$POMODORO_RESUMED_FILE"
@@ -254,14 +274,7 @@ remove_time_paused_file() {
 	remove_file "$POMODORO_RESUMED_FILE"
 }
 
-pomodoro_start() {
-	clean_env
-	mkdir -p $POMODORO_DIR
-	write_to_file "$(get_seconds)" "$POMODORO_START_FILE"
-
-	set_status "in_progress"
-
-	# Log intervals
+log_intervals() {
 	if [ "$(get_pomodoro_intervals)" != "0" ]; then
 		if intervals_reached; then
 			remove_file "$POMODORO_INTERVAL_FILE"
@@ -274,9 +287,18 @@ pomodoro_start() {
 			write_to_file "1" "$POMODORO_INTERVAL_FILE"
 		fi
 	fi
+}
+
+pomodoro_start() {
+	clean_env
+	mkdir -p $POMODORO_DIR
+	write_to_file "$(get_seconds)" "$POMODORO_START_FILE"
+
+	set_status "in_progress"
+	log_intervals
 
 	send_notification "🍅 Pomodoro started!" "Your Pomodoro is underway"
-	if_inside_tmux && tmux refresh-client -S
+	refresh_statusline
 	return 0
 }
 
@@ -290,8 +312,24 @@ pomodoro_cancel() {
 		send_notification "🍅 Pomodoro cancelled!" "Your Pomodoro has been cancelled"
 	fi
 
-	if_inside_tmux && tmux refresh-client -S
+	refresh_statusline
 	return 0
+}
+
+pomodoro_skip() {
+	pomodoro_status="$(read_status)"
+
+	if [ "$pomodoro_status" = "in_progress" ]; then
+		write_to_file "pomodoro" "$POMODORO_SKIP_FILE"
+		refresh_statusline
+		return 0
+	fi
+
+	if [ "$pomodoro_status" = "break" ] || [ "$pomodoro_status" = "long_break" ]; then
+		write_to_file "break" "$POMODORO_SKIP_FILE"
+		refresh_statusline
+		return 0
+	fi
 }
 
 pomodoro_custom() {
@@ -374,8 +412,8 @@ pomodoro_status() {
 		printf "%s%s" "$(get_tmux_option "$pomodoro_on" "$pomodoro_on_default")" "$(format_seconds $time_left)"
 	fi
 
-	# Has the Pomodoro completed?
-	[ $elapsed_time -ge "$pomodoro_duration" ] && completed=true || completed=false
+	# Has the Pomodoro completed or been skipped?
+	{ [ $elapsed_time -ge "$pomodoro_duration" ] || skipped_pomodoro; } && completed=true || completed=false
 
 	# Pomodoro completed
 	if [ "$completed" = true ] && [ "$pomodoro_status" == "in_progress" ]; then
@@ -425,17 +463,16 @@ pomodoro_status() {
 
 	# Break in progress, might be complete
 	if [ "$pomodoro_status" == "break" ] || [ "$pomodoro_status" == "long_break" ]; then
-		[ "$elapsed_time" -ge $((pomodoro_duration + $(break_length))) ] && break_complete=true || break_complete=false
+		{ [ "$elapsed_time" -ge $((pomodoro_duration + $(break_length))) ] || skipped_break; } && break_complete=true || break_complete=false
 
 		if prompt_user; then
-			[ $((current_time - break_start_time - time_paused_for)) -ge "$(break_length)" ] && break_complete=true || break_complete=false
+			{ [ $((current_time - break_start_time - time_paused_for)) -ge "$(break_length)" ] || skipped_break; } && break_complete=true || break_complete=false
 		fi
 	fi
 
 	# Break complete
-	if [ "$break_complete" = true ] && { [ "$pomodoro_status" == "break" ] || [ "$pomodoro_status" == "long_break" ]; }; then
+	if [ "$break_complete" = true ] && { [ "$pomodoro_status" == "break" ] || [ "$pomodoro_status" == "long_break" ] || [ "$pomodoro_status" == "break_complete" ]; }; then
 		remove_time_paused_file
-
 		pomodoro_status="break_complete"
 
 		break_message="🍅 Break completed!"
@@ -470,6 +507,8 @@ main() {
 
 	if [ "$cmd" = "toggle" ]; then
 		pomodoro_toggle
+	elif [ "$cmd" = "skip" ]; then
+		pomodoro_skip
 	elif [ "$cmd" = "cancel" ]; then
 		pomodoro_cancel true
 	elif [ "$cmd" = "menu" ]; then

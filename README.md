@@ -17,12 +17,11 @@ Incorporate the <a href="https://en.wikipedia.org/wiki/Pomodoro_Technique">Pomod
 
 ## :sparkles: Features
 
-- Toggle a Pomodoro timer on/off and see the countdown in the status bar
-- Upon completion of a Pomodoro, see a break countdown in the status bar
-- Pause and resume a Pomodoro or break at any point
+- Toggle a Pomodoro and see the countdown and the break in the status bar
+- Skip, pause and resume a Pomodoro/break at any point
 - Customise the Pomodoro duration, break times and intervals
-- Allow your Pomodoros to automatically restart
-- Desktop alerts for Pomodoro and break completion (macOS and Linux only)
+- Restart your Pomodoros to automatically or be prompted
+- Desktop alerts for Pomodoros and breaks (macOS and Linux only)
 - Custom keybindings
 
 ## :camera: Screenshots
@@ -55,8 +54,9 @@ set -g @plugin 'olimorris/tmux-pomodoro-plus'
 
 ### Default keybindings
 
-- `<tmux-prefix> p` to toggle between starting/pausing a Pomodoro or a break
-- `<tmux-prefix> P` to cancel a Pomodoro
+- `<tmux-prefix> p` to toggle between starting/pausing a Pomodoro/break
+- `<tmux-prefix> P` to cancel a Pomodoro/break
+- `<tmux-prefix> _` to skip a Pomodoro/break
 - `<tmux-prefix> C-p` to open the Pomodoro timer menu
 - `<tmux-prefix> M-p` to set a custom Pomodoro timer
 
@@ -84,7 +84,7 @@ set -g @pomodoro_mins 25                       # The duration of the Pomodoro
 set -g @pomodoro_break_mins 5                  # The duration of the break after the Pomodoro completes
 set -g @pomodoro_intervals 4                   # The number of intervals before a longer break is started
 set -g @pomodoro_long_break_mins 25            # The duration of the long break
-set -g @pomodoro_prompt_me 'off'               # Get prompted to start Pomodoros and breaks
+set -g @pomodoro_prompt_me 'on'                # Get prompted to start Pomodoros and breaks
 
 set -g @pomodoro_on " 🍅"                      # The formatted output when the Pomodoro is running
 set -g @pomodoro_complete " ✔︎"                 # The formatted output when the break is running
@@ -104,7 +104,7 @@ The output from the plugin can be customised to fit in with your statusline:
 ```bash
 set -g @pomodoro_on "#[fg=$text_red]🍅 "
 set -g @pomodoro_complete "#[fg=$text_green]🍅 "
-set -g @pomodoro_pause "  #[fg=$color_yellow]🍅 "
+set -g @pomodoro_pause "#[fg=$color_yellow]🍅 "
 set -g @pomodoro_prompt_break "#[fg=$color_green]🕤 ? "
 set -g @pomodoro_prompt_pomodoro "#[fg=$color_gray]🕤 ? "
 ```

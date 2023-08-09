@@ -7,6 +7,8 @@ POMODORO_BREAK_MINS_FILE="$CURRENT_DIR/scripts/user_break_mins.txt"
 
 default_toggle_pomodoro="p"
 toggle_pomodoro="@pomodoro_toggle"
+default_skip_pomodoro="_"
+skip_pomodoro="@pomodoro_skip"
 default_cancel_pomodoro="P"
 cancel_pomodoro="@pomodoro_cancel"
 
@@ -37,6 +39,11 @@ set_bindings() {
 		tmux bind-key "$key" run-shell "$CURRENT_DIR/scripts/pomodoro.sh toggle"
 		tmux bind-key "C-$key" run-shell "$CURRENT_DIR/scripts/pomodoro.sh menu"
 		tmux bind-key "M-$key" run-shell "$CURRENT_DIR/scripts/pomodoro.sh custom"
+	done
+
+	skip_binding=$(get_tmux_option "$skip_pomodoro" "$default_skip_pomodoro")
+	for key in $skip_binding; do
+		tmux bind-key "$key" run-shell "$CURRENT_DIR/scripts/pomodoro.sh skip"
 	done
 
 	cancel_binding=$(get_tmux_option "$cancel_pomodoro" "$default_cancel_pomodoro")
