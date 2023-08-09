@@ -11,6 +11,7 @@ POMODORO_SKIP_FILE="$POMODORO_DIR/pomodoro_skip.txt"
 # Files to track the time left for a Pomodoro/break and to check when a pause was initiated
 POMODORO_PAUSED_FILE="$POMODORO_DIR/pomodoro_paused.txt"
 POMODORO_RESUMED_FILE="$POMODORO_DIR/pomodoro_resumed.txt"
+POMODORO_FROZEN_FILE="$POMODORO_DIR/pomodoro_frozen.txt"
 # File which records the start time of the current break
 POMODORO_PROMPT_BREAK_FILE="$POMODORO_DIR/pomodoro_break_start.txt"
 # File which tracks Pomodoro intervals
@@ -152,6 +153,7 @@ clean_env() {
 	remove_file "$POMODORO_SKIP_FILE"
 	remove_file "$POMODORO_START_FILE"
 	remove_file "$POMODORO_PAUSED_FILE"
+	remove_file "$POMODORO_FROZEN_FILE"
 	remove_file "$POMODORO_RESUMED_FILE"
 	remove_file "$POMODORO_STATUS_FILE"
 	remove_file "$POMODORO_PROMPT_BREAK_FILE"
@@ -259,6 +261,7 @@ pomodoro_resume() {
 	write_to_file "$time_paused_for" "$POMODORO_RESUMED_FILE"
 
 	remove_file "$POMODORO_PAUSED_FILE"
+	remove_file "$POMODORO_FROZEN_FILE"
 	send_notification "🍅 Pomodoro resuming!" "Your Pomodoro has resumed"
 }
 
@@ -388,12 +391,6 @@ pomodoro_status() {
 		return 0
 	fi
 
-	if pomodoro_paused; then
-		printf "%s" "$(get_tmux_option "$pomodoro_pause" "$pomodoro_pause_default")"
-		show_intervals
-		return
-	fi
-
 	# Display the waiting prompts to the user
 	if [ "$pomodoro_status" == "waiting_pomodoro" ]; then
 		printf "%s" "$(get_tmux_option "$pomodoro_prompt_pomodoro" "$pomodoro_prompt_pomodoro_default")"
@@ -409,7 +406,15 @@ pomodoro_status() {
 	# Pomodoro in progress
 	if [ "$pomodoro_status" == "in_progress" ] && [ $elapsed_time -lt "$pomodoro_duration" ]; then
 		time_left="$((pomodoro_duration - elapsed_time))"
-		printf "%s%s" "$(get_tmux_option "$pomodoro_on" "$pomodoro_on_default")" "$(format_seconds $time_left)"
+
+		if pomodoro_paused; then
+			if ! file_exists "$POMODORO_FROZEN_FILE"; then
+				write_to_file "$(format_seconds $time_left)" "$POMODORO_FROZEN_FILE"
+			fi
+			printf "%s%s" "$(get_tmux_option "$pomodoro_pause" "$pomodoro_pause_default")" "$(read_file "$POMODORO_FROZEN_FILE")"
+		else
+			printf "%s%s" "$(get_tmux_option "$pomodoro_on" "$pomodoro_on_default")" "$(format_seconds $time_left)"
+		fi
 	fi
 
 	# Has the Pomodoro completed or been skipped?
@@ -458,7 +463,14 @@ pomodoro_status() {
 		fi
 
 		break_time_left=$((break_time_left))
-		printf "%s%s" "$(get_tmux_option "$pomodoro_complete" "$pomodoro_complete_default")" "$(format_seconds $break_time_left)"
+		if pomodoro_paused; then
+			if ! file_exists "$POMODORO_FROZEN_FILE"; then
+				write_to_file "$(format_seconds $break_time_left)" "$POMODORO_FROZEN_FILE"
+			fi
+			printf "%s%s" "$(get_tmux_option "$pomodoro_pause" "$pomodoro_pause_default")" "$(read_file "$POMODORO_FROZEN_FILE")"
+		else
+			printf "%s%s" "$(get_tmux_option "$pomodoro_complete" "$pomodoro_complete_default")" "$(format_seconds $break_time_left)"
+		fi
 	fi
 
 	# Break in progress, might be complete
