@@ -402,13 +402,12 @@ pomodoro_status() {
 	pomodoro_status="$(read_status)"
 	time_paused_for="$(time_paused_for)"
 	start_time=$(read_file "$START_FILE")
-	pomodoro_duration="$(minutes_to_seconds "$(get_pomodoro_duration)")"
-
 	elapsed_time=$((current_time - start_time - time_paused_for))
+	pomodoro_duration="$(minutes_to_seconds "$(get_pomodoro_duration)")"
 
 	# ___________________________________________________| statusline |__ ;
 
-	# Don't display anything if the pomodoro isn't in progress
+	# Don't display anything if the Pomodoro isn't in progress
 	if [ "$start_time" -eq 1 ]; then
 		return 0
 	fi
@@ -444,16 +443,12 @@ pomodoro_status() {
 			if ! file_exists "$FROZEN_DISPLAY_FILE"; then
 				write_to_file "$(format_seconds $time_left)" "$FROZEN_DISPLAY_FILE"
 			fi
-			# NOTE: This is duplicated to ensure that visually there is no lag in the
-			# UI when going from a running Pomodoro/break to a paused one
 			printf "%s%s" "$(get_tmux_option "$pomodoro_pause" "$pomodoro_pause_default")" "$(format_seconds $time_left)"
-			show_intervals
-			return
 		else
 			printf "%s%s" "$(get_tmux_option "$pomodoro_on" "$pomodoro_on_default")" "$(format_seconds $time_left)"
-			show_intervals
-			return
 		fi
+		show_intervals
+		return
 	fi
 
 	# ________________________________________________________| break |__ ;
@@ -489,16 +484,12 @@ pomodoro_status() {
 			if ! file_exists "$FROZEN_DISPLAY_FILE"; then
 				write_to_file "$(format_seconds $time_left)" "$FROZEN_DISPLAY_FILE"
 			fi
-			# NOTE: This is duplicated to ensure that visually there is no lag in the
-			# UI when going from a running Pomodoro/break to a paused one
 			printf "%s%s" "$(get_tmux_option "$pomodoro_pause" "$pomodoro_pause_default")" "$(format_seconds $time_left)"
-			show_intervals
-			return
 		else
 			printf "%s%s" "$(get_tmux_option "$pomodoro_complete" "$pomodoro_complete_default")" "$(format_seconds $time_left)"
-			show_intervals
-			return
 		fi
+		show_intervals
+		return
 	fi
 
 	# Break complete
