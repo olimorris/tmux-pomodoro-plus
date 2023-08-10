@@ -428,7 +428,7 @@ pomodoro_status() {
 	fi
 
 	# Pomodoro in progress
-	if [ "$pomodoro_status" == "in_progress" ]; then
+	if [ "$pomodoro_status" == "in_progress" ] then
 		time_left="$((pomodoro_duration - elapsed_time))"
 
 		# Write the current countdown to disk
@@ -445,7 +445,7 @@ pomodoro_status() {
 	fi
 
 	# Has the Pomodoro completed or been skipped?
-	{ [ $elapsed_time -ge "$pomodoro_duration" ] || skipped_pomodoro; } && ! is_paused && completed=true || completed=false
+	{ [ $elapsed_time -ge "$pomodoro_duration" ] || skipped_pomodoro; } && completed=true || completed=false
 
 	# Pomodoro completed
 	if [ "$completed" = true ] && [ "$pomodoro_status" == "in_progress" ]; then
@@ -504,7 +504,7 @@ pomodoro_status() {
 
 	# Break in progress, might be complete
 	if [ "$pomodoro_status" == "break" ] || [ "$pomodoro_status" == "long_break" ]; then
-		{ [ "$elapsed_time" -ge $((pomodoro_duration + $(break_length))) ] || skipped_break; } && ! is_paused && break_complete=true || break_complete=false
+		{ [ "$elapsed_time" -ge $((pomodoro_duration + $(break_length))) ] || skipped_break; } && break_complete=true || break_complete=false
 
 		if prompt_user; then
 			{ [ $((current_time - break_start_time - time_paused_for)) -ge "$(break_length)" ] || skipped_break; } && break_complete=true || break_complete=false
