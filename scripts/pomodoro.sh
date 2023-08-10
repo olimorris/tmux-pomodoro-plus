@@ -467,7 +467,7 @@ pomodoro_status() {
 	# Pomodoro completed, waiting for the user to respond to the prompt
 	if file_exists "$POMODORO_PROMPT_BREAK_FILE" && prompt_user; then
 		break_start_time=$(read_file "$POMODORO_PROMPT_BREAK_FILE")
-		elapsed_time=$((current_time - break_start_time - time_paused_for))
+		elapsed_time=$((current_time - break_start_time + time_paused_for))
 	fi
 
 	# Pomodoro completed, starting the break
