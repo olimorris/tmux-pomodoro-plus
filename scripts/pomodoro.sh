@@ -428,7 +428,7 @@ pomodoro_status() {
 	fi
 
 	# Pomodoro in progress
-	if [ "$pomodoro_status" == "in_progress" ] then
+	if [ "$pomodoro_status" == "in_progress" ]; then
 		time_left="$((pomodoro_duration - elapsed_time))"
 
 		# Write the current countdown to disk
