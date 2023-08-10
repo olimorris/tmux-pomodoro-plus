@@ -4,22 +4,15 @@
 CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 POMODORO_DIR="/tmp/pomodoro"
 
-# File which records the start time of the Pomodoro
-POMODORO_START_FILE="$POMODORO_DIR/pomodoro_start.txt"
-# File which records what the user skipped
-POMODORO_SKIP_FILE="$POMODORO_DIR/pomodoro_skip.txt"
-# Files to track the time left for a Pomodoro/break and to check when a pause was initiated
-POMODORO_PAUSED_FILE="$POMODORO_DIR/pomodoro_paused.txt"
-POMODORO_RESUMED_FILE="$POMODORO_DIR/pomodoro_resumed.txt"
-POMODORO_FROZEN_FILE="$POMODORO_DIR/pomodoro_frozen.txt"
-# File which records the start time of the current break
-POMODORO_PROMPT_BREAK_FILE="$POMODORO_DIR/pomodoro_break_start.txt"
-# File which tracks Pomodoro intervals
-POMODORO_INTERVAL_FILE="$POMODORO_DIR/pomodoro_interval.txt"
-# File which stores the current status of the Pomodoro/break
-POMODORO_STATUS_FILE="$POMODORO_DIR/pomodoro_status.txt"
+START_FILE="$POMODORO_DIR/start_time.txt"                # Stores the start time of the Pomodoro/break
+PAUSED_FILE="$POMODORO_DIR/paused_time.txt"              # Stores the time when the Pomodoro/break was paused
+SKIPPED_FILE="$POMODORO_DIR/skipped.txt"                 # Stores what whether a Pomodoro or break was skipped
+TIME_PAUSED_FOR_FILE="$POMODORO_DIR/time_paused_for.txt" # Stores the time when the Pomodoro/break was resumed
+FROZEN_DISPLAY_FILE="$POMODORO_DIR/frozen_display.txt"   # Stores the frozen display as it was when paused
+INTERVAL_FILE="$POMODORO_DIR/interval_count.txt"         # Stores the current increment count
+STATUS_FILE="$POMODORO_DIR/current_status.txt"           # Stores the current status of the Pomodoro or break
 
-# File which stores the users custom timings
+# Files which store a user's custom timings
 POMODORO_USER_MINS_FILE="$CURRENT_DIR/user_mins.txt"
 POMODORO_USER_INTERVAL_FILE="$CURRENT_DIR/user_interval.txt"
 POMODORO_USER_BREAK_MINS_FILE="$CURRENT_DIR/user_break_mins.txt"
@@ -151,26 +144,25 @@ send_notification() {
 }
 
 clean_env() {
-	remove_file "$POMODORO_SKIP_FILE"
-	remove_file "$POMODORO_START_FILE"
-	remove_file "$POMODORO_PAUSED_FILE"
-	remove_file "$POMODORO_FROZEN_FILE"
-	remove_file "$POMODORO_RESUMED_FILE"
-	remove_file "$POMODORO_STATUS_FILE"
-	remove_file "$POMODORO_PROMPT_BREAK_FILE"
+	remove_file "$SKIPPED_FILE"
+	remove_file "$START_FILE"
+	remove_file "$PAUSED_FILE"
+	remove_file "$FROZEN_DISPLAY_FILE"
+	remove_file "$TIME_PAUSED_FOR_FILE"
+	remove_file "$STATUS_FILE"
 }
 
 set_status() {
 	local message="$1"
-	write_to_file "$message" "$POMODORO_STATUS_FILE"
+	write_to_file "$message" "$STATUS_FILE"
 }
 
 read_status() {
-	read_file "$POMODORO_STATUS_FILE"
+	read_file "$STATUS_FILE"
 }
 
 intervals_reached() {
-	interval_value=$(read_file "$POMODORO_INTERVAL_FILE")
+	interval_value=$(read_file "$INTERVAL_FILE")
 
 	# If intervals meet the maximum value, delete interval file
 	if [ "$interval_value" -eq "$(get_pomodoro_intervals)" ]; then
@@ -195,13 +187,13 @@ is_being_prompted() {
 }
 
 skipped_pomodoro() {
-	if [ "$(read_file "$POMODORO_SKIP_FILE")" == "pomodoro" ]; then
+	if [ "$(read_file "$SKIPPED_FILE")" == "pomodoro" ]; then
 		return 0
 	fi
 	return 1
 }
 skipped_break() {
-	if [ "$(read_file "$POMODORO_SKIP_FILE")" == "break" ]; then
+	if [ "$(read_file "$SKIPPED_FILE")" == "break" ]; then
 		return 0
 	fi
 	return 1
@@ -218,25 +210,30 @@ break_length() {
 show_intervals() {
 	show_intervals="$(show_pomodoro_intervals)"
 	if [ "$show_intervals" != "0" ]; then
-		printf " $show_intervals" "$(read_file "$POMODORO_INTERVAL_FILE")" "$(get_pomodoro_intervals)"
+		printf " $show_intervals" "$(read_file "$INTERVAL_FILE")" "$(get_pomodoro_intervals)"
 	fi
 }
 
 pomodoro_toggle() {
 	if [ "$(read_status)" == "waiting_break" ]; then
-		write_to_file "$(get_seconds)" "$POMODORO_PROMPT_BREAK_FILE"
-		set_status "initiating_break"
+		pomodoro_status="break"
+		if intervals_reached; then
+			pomodoro_status="long_break"
+		fi
+		set_status "$pomodoro_status"
+
+		break_start
 		refresh_statusline
 		return 0
 	fi
 
-	if ! is_being_prompted && file_exists "$POMODORO_START_FILE" && ! file_exists "$POMODORO_PAUSED_FILE"; then
+	if ! is_being_prompted && file_exists "$START_FILE" && ! file_exists "$PAUSED_FILE"; then
 		pomodoro_pause
 		refresh_statusline
 		return 0
 	fi
 
-	if ! is_being_prompted && file_exists "$POMODORO_PAUSED_FILE"; then
+	if ! is_being_prompted && file_exists "$PAUSED_FILE"; then
 		pomodoro_resume
 		refresh_statusline
 		return 0
@@ -246,12 +243,12 @@ pomodoro_toggle() {
 }
 
 pomodoro_pause() {
-	write_to_file "$(get_seconds)" "$POMODORO_PAUSED_FILE"
+	write_to_file "$(get_seconds)" "$PAUSED_FILE"
 	send_notification "🍅 Pomodoro paused!" "Your Pomodoro has been paused"
 }
 
 is_paused() {
-	if file_exists "$POMODORO_PAUSED_FILE"; then
+	if file_exists "$PAUSED_FILE"; then
 		return 0
 	fi
 	return 1
@@ -259,37 +256,37 @@ is_paused() {
 
 pomodoro_resume() {
 	# Keep a running total of the time paused for
-	time_paused_for="$(($(get_seconds) - $(read_file "$POMODORO_PAUSED_FILE") + $(read_file "$POMODORO_RESUMED_FILE")))"
-	write_to_file "$time_paused_for" "$POMODORO_RESUMED_FILE"
+	time_paused_for="$(($(get_seconds) - $(read_file "$PAUSED_FILE") + $(read_file "$TIME_PAUSED_FOR_FILE")))"
+	write_to_file "$time_paused_for" "$TIME_PAUSED_FOR_FILE"
 
-	remove_file "$POMODORO_PAUSED_FILE"
-	remove_file "$POMODORO_FROZEN_FILE"
+	remove_file "$PAUSED_FILE"
+	remove_file "$FROZEN_DISPLAY_FILE"
 	send_notification "🍅 Pomodoro resuming!" "Your Pomodoro has resumed"
 }
 
 time_paused_for() {
-	if file_exists "$POMODORO_RESUMED_FILE"; then
-		read_file "$POMODORO_RESUMED_FILE"
+	if file_exists "$TIME_PAUSED_FOR_FILE"; then
+		read_file "$TIME_PAUSED_FOR_FILE"
 	else
 		echo "0"
 	fi
 }
 
 remove_time_paused_file() {
-	remove_file "$POMODORO_RESUMED_FILE"
+	remove_file "$TIME_PAUSED_FOR_FILE"
 }
 
 log_intervals() {
 	if [ "$(get_pomodoro_intervals)" != "0" ]; then
 		if intervals_reached; then
-			remove_file "$POMODORO_INTERVAL_FILE"
+			remove_file "$INTERVAL_FILE"
 		fi
 
-		if file_exists "$POMODORO_INTERVAL_FILE"; then
-			increment=$(($(read_file "$POMODORO_INTERVAL_FILE") + 1))
-			write_to_file "$increment" "$POMODORO_INTERVAL_FILE"
+		if file_exists "$INTERVAL_FILE"; then
+			increment=$(($(read_file "$INTERVAL_FILE") + 1))
+			write_to_file "$increment" "$INTERVAL_FILE"
 		else
-			write_to_file "1" "$POMODORO_INTERVAL_FILE"
+			write_to_file "1" "$INTERVAL_FILE"
 		fi
 	fi
 }
@@ -297,7 +294,7 @@ log_intervals() {
 pomodoro_start() {
 	clean_env
 	mkdir -p $POMODORO_DIR
-	write_to_file "$(get_seconds)" "$POMODORO_START_FILE"
+	write_to_file "$(get_seconds)" "$START_FILE"
 
 	set_status "in_progress"
 	log_intervals
@@ -307,11 +304,19 @@ pomodoro_start() {
 	return 0
 }
 
+break_start() {
+	write_to_file "$(get_seconds)" "$START_FILE"
+
+	send_notification "🍅 Break started!" "Your break is underway"
+	refresh_statusline
+	return 0
+}
+
 pomodoro_cancel() {
 	local notification="$1"
 
 	clean_env
-	remove_file "$POMODORO_INTERVAL_FILE"
+	remove_file "$INTERVAL_FILE"
 
 	if [ "$notification" = true ]; then
 		send_notification "🍅 Pomodoro cancelled!" "Your Pomodoro has been cancelled"
@@ -325,13 +330,13 @@ pomodoro_skip() {
 	pomodoro_status="$(read_status)"
 
 	if [ "$pomodoro_status" = "in_progress" ]; then
-		write_to_file "pomodoro" "$POMODORO_SKIP_FILE"
+		write_to_file "pomodoro" "$SKIPPED_FILE"
 		refresh_statusline
 		return 0
 	fi
 
 	if [ "$pomodoro_status" = "break" ] || [ "$pomodoro_status" = "long_break" ]; then
-		write_to_file "break" "$POMODORO_SKIP_FILE"
+		write_to_file "break" "$SKIPPED_FILE"
 		refresh_statusline
 		return 0
 	fi
@@ -396,21 +401,21 @@ pomodoro_status() {
 	current_time=$(get_seconds)
 	pomodoro_status="$(read_status)"
 	time_paused_for="$(time_paused_for)"
-	pomodoro_start_time=$(read_file "$POMODORO_START_FILE")
+	start_time=$(read_file "$START_FILE")
 	pomodoro_duration="$(minutes_to_seconds "$(get_pomodoro_duration)")"
 
-	elapsed_time=$((current_time - pomodoro_start_time - time_paused_for))
+	elapsed_time=$((current_time - start_time - time_paused_for))
 
-	# _____________________________________________| statusline logic |__ ;
+	# ___________________________________________________| statusline |__ ;
 
 	# Don't display anything if the pomodoro isn't in progress
-	if [ "$pomodoro_start_time" -eq 1 ]; then
+	if [ "$start_time" -eq 1 ]; then
 		return 0
 	fi
 
 	# Display the frozen countdown to the user
-	if is_paused && file_exists "$POMODORO_FROZEN_FILE"; then
-		printf "%s%s" "$(get_tmux_option "$pomodoro_pause" "$pomodoro_pause_default")" "$(read_file "$POMODORO_FROZEN_FILE")"
+	if is_paused && file_exists "$FROZEN_DISPLAY_FILE"; then
+		printf "%s%s" "$(get_tmux_option "$pomodoro_pause" "$pomodoro_pause_default")" "$(read_file "$FROZEN_DISPLAY_FILE")"
 		show_intervals
 		return
 	fi
@@ -427,92 +432,78 @@ pomodoro_status() {
 		return
 	fi
 
+	# _____________________________________________________| pomodoro |__ ;
+	{ [ $elapsed_time -ge "$pomodoro_duration" ] || skipped_pomodoro; } && pomodoro_completed=true || pomodoro_completed=false
+
 	# Pomodoro in progress
-	if [ "$pomodoro_status" == "in_progress" ]; then
+	if [ "$pomodoro_completed" = false ] && [ "$pomodoro_status" == "in_progress" ]; then
 		time_left="$((pomodoro_duration - elapsed_time))"
 
-		# Write the current countdown to disk
+		# Write the current countdown to disk if we're paused
 		if is_paused; then
-			if ! file_exists "$POMODORO_FROZEN_FILE"; then
-				write_to_file "$(format_seconds $time_left)" "$POMODORO_FROZEN_FILE"
+			if ! file_exists "$FROZEN_DISPLAY_FILE"; then
+				write_to_file "$(format_seconds $time_left)" "$FROZEN_DISPLAY_FILE"
 			fi
 			# NOTE: This is duplicated to ensure that visually there is no lag in the
 			# UI when going from a running Pomodoro/break to a paused one
 			printf "%s%s" "$(get_tmux_option "$pomodoro_pause" "$pomodoro_pause_default")" "$(format_seconds $time_left)"
+			show_intervals
+			return
 		else
 			printf "%s%s" "$(get_tmux_option "$pomodoro_on" "$pomodoro_on_default")" "$(format_seconds $time_left)"
+			show_intervals
+			return
 		fi
 	fi
 
-	# Has the Pomodoro completed or been skipped?
-	{ [ $elapsed_time -ge "$pomodoro_duration" ] || skipped_pomodoro; } && completed=true || completed=false
-
-	# Pomodoro completed
-	if [ "$completed" = true ] && [ "$pomodoro_status" == "in_progress" ]; then
-		remove_time_paused_file
-
-		# Pomodoro completed, notifying the user
-		if ! prompt_user; then
-			send_notification "🍅 Pomodoro completed!" "Starting the break"
-		fi
-
-		# Pomodoro completed, starting the prompt
-		if prompt_user; then
-			pomodoro_status="waiting_break"
-			set_status "$pomodoro_status"
-			send_notification "🍅 Pomodoro completed!" "Start the break?"
-		fi
-	fi
-
-	# Pomodoro completed, waiting for the user to respond to the prompt
-	if file_exists "$POMODORO_PROMPT_BREAK_FILE" && prompt_user; then
-		break_start_time=$(read_file "$POMODORO_PROMPT_BREAK_FILE")
-		elapsed_time=$((current_time - break_start_time + time_paused_for))
-	fi
+	# ________________________________________________________| break |__ ;
 
 	# Pomodoro completed, starting the break
-	if [ "$completed" = true ] && { [ "$pomodoro_status" == "in_progress" ] || [ "$pomodoro_status" == "initiating_break" ]; }; then
-		pomodoro_status="break"
+	# TODO: Refactor this
+	if [ "$pomodoro_completed" = true ] && [ "$pomodoro_status" == "in_progress" ]; then
+		remove_time_paused_file
 
-		if intervals_reached; then
-			pomodoro_status="long_break"
+		if prompt_user; then
+			pomodoro_status="waiting_break"
+			send_notification "🍅 Start break?" "Start the break now?"
+		else
+			pomodoro_status="break"
+			if intervals_reached; then
+				pomodoro_status="long_break"
+			fi
+			set_status "$pomodoro_status"
+			break_start
 		fi
 
 		set_status "$pomodoro_status"
 	fi
 
+	# Has the break completed or been skipped?
+	{ [ "$elapsed_time" -ge "$(break_length)" ] || skipped_break; } && break_complete=true || break_complete=false
+
 	# Break in progress
-	if [ "$pomodoro_status" == "break" ] || [ "$pomodoro_status" == "long_break" ]; then
-		break_time_left=$((-(elapsed_time - pomodoro_duration - $(break_length))))
+	if [ "$break_complete" = false ] && { [ "$pomodoro_status" == "break" ] || [ "$pomodoro_status" == "long_break" ]; }; then
+		time_left="$(($(break_length) - elapsed_time))"
 
-		if prompt_user; then
-			break_time_left=$((-(current_time - break_start_time - $(break_length) - time_paused_for)))
-		fi
-
-		# Write the current countdown to disk
 		if is_paused; then
-			if ! file_exists "$POMODORO_FROZEN_FILE"; then
-				write_to_file "$(format_seconds $break_time_left)" "$POMODORO_FROZEN_FILE"
+			if ! file_exists "$FROZEN_DISPLAY_FILE"; then
+				write_to_file "$(format_seconds $time_left)" "$FROZEN_DISPLAY_FILE"
 			fi
 			# NOTE: This is duplicated to ensure that visually there is no lag in the
 			# UI when going from a running Pomodoro/break to a paused one
-			printf "%s%s" "$(get_tmux_option "$pomodoro_pause" "$pomodoro_pause_default")" "$(format_seconds $break_time_left)"
+			printf "%s%s" "$(get_tmux_option "$pomodoro_pause" "$pomodoro_pause_default")" "$(format_seconds $time_left)"
+			show_intervals
+			return
 		else
-			printf "%s%s" "$(get_tmux_option "$pomodoro_complete" "$pomodoro_complete_default")" "$(format_seconds $break_time_left)"
-		fi
-	fi
-
-	# Break in progress, might be complete
-	if [ "$pomodoro_status" == "break" ] || [ "$pomodoro_status" == "long_break" ]; then
-		{ [ "$elapsed_time" -ge $((pomodoro_duration + $(break_length))) ] || skipped_break; } && break_complete=true || break_complete=false
-
-		if prompt_user; then
-			{ [ $((current_time - break_start_time - time_paused_for)) -ge "$(break_length)" ] || skipped_break; } && break_complete=true || break_complete=false
+			printf "%s%s" "$(get_tmux_option "$pomodoro_complete" "$pomodoro_complete_default")" "$(format_seconds $time_left)"
+			show_intervals
+			return
 		fi
 	fi
 
 	# Break complete
-	if [ "$break_complete" = true ] && { [ "$pomodoro_status" == "break" ] || [ "$pomodoro_status" == "long_break" ] || [ "$pomodoro_status" == "break_complete" ]; }; then
+	# TODO: Refactor this
+	if [ "$break_complete" = true ] && { [ "$pomodoro_status" == "break" ] || [ "$pomodoro_status" == "long_break" ]; }; then
 		remove_time_paused_file
 		pomodoro_status="break_complete"
 
@@ -537,9 +528,6 @@ pomodoro_status() {
 
 		set_status "$pomodoro_status"
 	fi
-
-	# Display interval count last in the statusline
-	show_intervals
 }
 
 main() {
