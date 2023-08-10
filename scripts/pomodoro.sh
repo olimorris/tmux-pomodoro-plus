@@ -250,7 +250,7 @@ pomodoro_pause() {
 	send_notification "🍅 Pomodoro paused!" "Your Pomodoro has been paused"
 }
 
-pomodoro_paused() {
+is_paused() {
 	if file_exists "$POMODORO_PAUSED_FILE"; then
 		return 0
 	fi
@@ -408,6 +408,13 @@ pomodoro_status() {
 		return 0
 	fi
 
+	# Display the frozen countdown to the user
+	if is_paused && file_exists "$POMODORO_FROZEN_FILE"; then
+		printf "%s%s" "$(get_tmux_option "$pomodoro_pause" "$pomodoro_pause_default")" "$(read_file "$POMODORO_FROZEN_FILE")"
+		show_intervals
+		return
+	fi
+
 	# Display the waiting prompts to the user
 	if [ "$pomodoro_status" == "waiting_pomodoro" ]; then
 		printf "%s" "$(get_tmux_option "$pomodoro_prompt_pomodoro" "$pomodoro_prompt_pomodoro_default")"
@@ -421,21 +428,24 @@ pomodoro_status() {
 	fi
 
 	# Pomodoro in progress
-	if [ "$pomodoro_status" == "in_progress" ] && [ $elapsed_time -lt "$pomodoro_duration" ]; then
+	if [ "$pomodoro_status" == "in_progress" ]; then
 		time_left="$((pomodoro_duration - elapsed_time))"
 
-		if pomodoro_paused; then
+		# Write the current countdown to disk
+		if is_paused; then
 			if ! file_exists "$POMODORO_FROZEN_FILE"; then
 				write_to_file "$(format_seconds $time_left)" "$POMODORO_FROZEN_FILE"
 			fi
-			printf "%s%s" "$(get_tmux_option "$pomodoro_pause" "$pomodoro_pause_default")" "$(read_file "$POMODORO_FROZEN_FILE")"
+			# NOTE: This is duplicated to ensure that visually there is no lag in the
+			# UI when going from a running Pomodoro/break to a paused one
+			printf "%s%s" "$(get_tmux_option "$pomodoro_pause" "$pomodoro_pause_default")" "$(format_seconds $time_left)"
 		else
 			printf "%s%s" "$(get_tmux_option "$pomodoro_on" "$pomodoro_on_default")" "$(format_seconds $time_left)"
 		fi
 	fi
 
 	# Has the Pomodoro completed or been skipped?
-	{ [ $elapsed_time -ge "$pomodoro_duration" ] || skipped_pomodoro; } && completed=true || completed=false
+	{ [ $elapsed_time -ge "$pomodoro_duration" ] || skipped_pomodoro; } && ! is_paused && completed=true || completed=false
 
 	# Pomodoro completed
 	if [ "$completed" = true ] && [ "$pomodoro_status" == "in_progress" ]; then
@@ -479,12 +489,14 @@ pomodoro_status() {
 			break_time_left=$((-(current_time - break_start_time - $(break_length) - time_paused_for)))
 		fi
 
-		break_time_left=$((break_time_left))
-		if pomodoro_paused; then
+		# Write the current countdown to disk
+		if is_paused; then
 			if ! file_exists "$POMODORO_FROZEN_FILE"; then
 				write_to_file "$(format_seconds $break_time_left)" "$POMODORO_FROZEN_FILE"
 			fi
-			printf "%s%s" "$(get_tmux_option "$pomodoro_pause" "$pomodoro_pause_default")" "$(read_file "$POMODORO_FROZEN_FILE")"
+			# NOTE: This is duplicated to ensure that visually there is no lag in the
+			# UI when going from a running Pomodoro/break to a paused one
+			printf "%s%s" "$(get_tmux_option "$pomodoro_pause" "$pomodoro_pause_default")" "$(format_seconds $break_time_left)"
 		else
 			printf "%s%s" "$(get_tmux_option "$pomodoro_complete" "$pomodoro_complete_default")" "$(format_seconds $break_time_left)"
 		fi
@@ -492,7 +504,7 @@ pomodoro_status() {
 
 	# Break in progress, might be complete
 	if [ "$pomodoro_status" == "break" ] || [ "$pomodoro_status" == "long_break" ]; then
-		{ [ "$elapsed_time" -ge $((pomodoro_duration + $(break_length))) ] || skipped_break; } && break_complete=true || break_complete=false
+		{ [ "$elapsed_time" -ge $((pomodoro_duration + $(break_length))) ] || skipped_break; } && ! is_paused && break_complete=true || break_complete=false
 
 		if prompt_user; then
 			{ [ $((current_time - break_start_time - time_paused_for)) -ge "$(break_length)" ] || skipped_break; } && break_complete=true || break_complete=false
