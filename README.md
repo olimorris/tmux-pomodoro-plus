@@ -84,7 +84,7 @@ set -g @pomodoro_mins 25                       # The duration of the Pomodoro
 set -g @pomodoro_break_mins 5                  # The duration of the break after the Pomodoro completes
 set -g @pomodoro_intervals 4                   # The number of intervals before a longer break is started
 set -g @pomodoro_long_break_mins 25            # The duration of the long break
-set -g @pomodoro_prompt_me 'on'                # Get prompted to start Pomodoros and breaks
+set -g @pomodoro_repeat 'off'                  # Automatically repeat the Pomodoros?
 
 set -g @pomodoro_on " 🍅"                      # The formatted output when the Pomodoro is running
 set -g @pomodoro_complete " ✔︎"                 # The formatted output when the break is running
@@ -97,6 +97,11 @@ set -g @pomodoro_sound 'off'                   # Sound for desktop notifications
 set -g @pomodoro_notifications 'off'           # Enable desktop notifications from your terminal
 set -g @pomodoro_granularity 'off'             # Enables MM:SS (ex: 00:10) format instead of the default (ex: 1m)
 ```
+
+### Using the menu
+
+It's possible to configure the timings from built-in menus within the app:
+
 
 ### Customising the status line
 

@@ -19,16 +19,17 @@ POMODORO_INTERVAL_FILE="$POMODORO_DIR/pomodoro_interval.txt"
 # File which stores the current status of the Pomodoro/break
 POMODORO_STATUS_FILE="$POMODORO_DIR/pomodoro_status.txt"
 
-# File which stores the users custom Pomodoro time
+# File which stores the users custom timings
 POMODORO_USER_MINS_FILE="$CURRENT_DIR/user_mins.txt"
-# File which stores the users custom break time
+POMODORO_USER_INTERVAL_FILE="$CURRENT_DIR/user_interval.txt"
 POMODORO_USER_BREAK_MINS_FILE="$CURRENT_DIR/user_break_mins.txt"
+POMODORO_USER_LONG_BREAK_MINS_FILE="$CURRENT_DIR/user_long_break_mins.txt"
 
 pomodoro_mins="@pomodoro_mins"
 pomodoro_intervals="@pomodoro_intervals"
 pomodoro_long_break="@pomodoro_long_break_mins"
 pomodoro_break="@pomodoro_break_mins"
-pomodoro_prompt="@pomodoro_prompt_me"
+pomodoro_repeat="@pomodoro_repeat"
 
 pomodoro_on="@pomodoro_on"
 pomodoro_on_default=" 🍅"
@@ -70,8 +71,8 @@ get_pomodoro_long_break() {
 	get_tmux_option "$pomodoro_long_break" "25"
 }
 
-get_pomodoro_prompt() {
-	get_tmux_option "$pomodoro_prompt" "on"
+get_pomodoro_repeat() {
+	get_tmux_option "$pomodoro_repeat" "off"
 }
 
 get_seconds() {
@@ -178,8 +179,9 @@ intervals_reached() {
 	return 1
 }
 
+# If the user doesn't want to be automatically repeat Pomodoros then we prompt them
 prompt_user() {
-	if [ "$(get_pomodoro_prompt)" == "on" ]; then
+	if [ "$(get_pomodoro_repeat)" == "off" ]; then
 		return 0
 	fi
 	return 1
@@ -338,7 +340,7 @@ pomodoro_skip() {
 pomodoro_custom() {
 	tmux command-prompt \
 		-I "$(get_pomodoro_duration), $(get_pomodoro_break)" \
-		-p 'Pomodoro duration (mins):, Break duration (mins):' \
+		-p 'Pomodoro (mins):, Break (mins):' \
 		"set -g @pomodoro_mins %1;
 		 set -g @pomodoro_break_mins %2;
 		 run-shell 'echo %1 > $POMODORO_USER_MINS_FILE';
@@ -366,6 +368,22 @@ pomodoro_menu() {
 		"15 minutes" "" "set -g @pomodoro_break_mins 15; run-shell 'echo 15 > $POMODORO_USER_BREAK_MINS_FILE'" \
 		"20 minutes" "" "set -g @pomodoro_break_mins 20; run-shell 'echo 20 > $POMODORO_USER_BREAK_MINS_FILE'" \
 		"30 minutes" "" "set -g @pomodoro_break_mins 30; run-shell 'echo 30 > $POMODORO_USER_BREAK_MINS_FILE'"
+
+	tmux display-menu -y S -x "$pomodoro_menu_position" -T " Intervals " \
+		"" \
+		"2 intervals" "" "set -g @pomodoro_intervals 2; run-shell 'echo 2 > $POMODORO_USER_INTERVAL_FILE'" \
+		"3 intervals" "" "set -g @pomodoro_intervals 3; run-shell 'echo 3 > $POMODORO_USER_INTERVAL_FILE'" \
+		"4 intervals" "" "set -g @pomodoro_intervals 4; run-shell 'echo 4 > $POMODORO_USER_INTERVAL_FILE'" \
+		"5 intervals" "" "set -g @pomodoro_intervals 5; run-shell 'echo 5 > $POMODORO_USER_INTERVAL_FILE'" \
+		"6 intervals" "" "set -g @pomodoro_intervals 6; run-shell 'echo 6 > $POMODORO_USER_INTERVAL_FILE'"
+
+	tmux display-menu -y S -x "$pomodoro_menu_position" -T " Long break " \
+		"" \
+		"5 minutes" "" "set -g @pomodoro_long_break_mins 5 ; run-shell 'echo 5  > $POMODORO_USER_LONG_BREAK_MINS_FILE'" \
+		"10 minutes" "" "set -g @pomodoro_long_break_mins 10; run-shell 'echo 10 > $POMODORO_USER_LONG_BREAK_MINS_FILE'" \
+		"15 minutes" "" "set -g @pomodoro_long_break_mins 15; run-shell 'echo 15 > $POMODORO_USER_LONG_BREAK_MINS_FILE'" \
+		"20 minutes" "" "set -g @pomodoro_long_break_mins 20; run-shell 'echo 20 > $POMODORO_USER_LONG_BREAK_MINS_FILE'" \
+		"30 minutes" "" "set -g @pomodoro_long_break_mins 30; run-shell 'echo 30 > $POMODORO_USER_LONG_BREAK_MINS_FILE'"
 
 	tmux display-menu -y S -x "$pomodoro_menu_position" -T " Start Pomodoro? " \
 		"Yes" "" "run-shell '$CURRENT_DIR/pomodoro.sh start'" \
