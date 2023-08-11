@@ -107,43 +107,6 @@ format_seconds() {
 	fi
 }
 
-minutes_to_seconds() {
-	local minutes=$1
-	echo $((minutes * 60))
-}
-
-if_inside_tmux() {
-	test -n "${TMUX}"
-}
-
-refresh_statusline() {
-	if_inside_tmux && tmux refresh-client -S
-}
-
-send_notification() {
-	if [ "$(get_notifications)" == 'on' ]; then
-		local title=$1
-		local message=$2
-		sound=$(get_sound)
-		export sound
-		case "$OSTYPE" in
-		linux* | *bsd*)
-			notify-send -t 8000 "$title" "$message"
-			if [[ "$sound" == "on" ]]; then
-				beep -D 1500
-			fi
-			;;
-		darwin*)
-			if [[ "$sound" == "off" ]]; then
-				osascript -e 'display notification "'"$message"'" with title "'"$title"'"'
-			else
-				osascript -e 'display notification "'"$message"'" with title "'"$title"'" sound name "'"$sound"'"'
-			fi
-			;;
-		esac
-	fi
-}
-
 clean_env() {
 	remove_file "$SKIPPED_FILE"
 	remove_file "$START_FILE"
@@ -467,7 +430,7 @@ pomodoro_status() {
 		if prompt_user; then
 			pomodoro_status="waiting_for_break"
 			set_status "$pomodoro_status"
-			send_notification "🍅 Start break?" "Start the break now?"
+			send_notification "🍅 Pomodoro completed!" "Start the break now?"
 			return 0
 		fi
 

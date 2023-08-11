@@ -51,6 +51,43 @@ write_to_file() {
 	echo "$data" >"$file"
 }
 
+if_inside_tmux() {
+	test -n "${TMUX}"
+}
+
+refresh_statusline() {
+	if_inside_tmux && tmux refresh-client -S
+}
+
+minutes_to_seconds() {
+	local minutes=$1
+	echo $((minutes * 60))
+}
+
+send_notification() {
+	if [ "$(get_notifications)" == 'on' ]; then
+		local title=$1
+		local message=$2
+		sound=$(get_sound)
+		export sound
+		case "$OSTYPE" in
+		linux* | *bsd*)
+			notify-send -t 8000 "$title" "$message"
+			if [[ "$sound" == "on" ]]; then
+				beep -D 1500
+			fi
+			;;
+		darwin*)
+			if [[ "$sound" == "off" ]]; then
+				osascript -e 'display notification "'"$message"'" with title "'"$title"'"'
+			else
+				osascript -e 'display notification "'"$message"'" with title "'"$title"'" sound name "'"$sound"'"'
+			fi
+			;;
+		esac
+	fi
+}
+
 debug_log() {
 	# add log print into the code (debug_log "hello from tmux_pomodoro_plus)"
 	# set true to enable log messages
