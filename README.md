@@ -77,8 +77,9 @@ set -g status-right "#{pomodoro_status}"
 The default configuration:
 
 ```bash
-set -g @pomodoro_toggle 'p'                    # Start/pause a Pomodoro or break with tmux-prefix + p
-set -g @pomodoro_cancel 'P'                    # Cancel a Pomodoro with tmux-prefix key + P
+set -g @pomodoro_toggle 'p'                    # Start/pause a Pomodoro/break
+set -g @pomodoro_cancel 'P'                    # Cancel the current session
+set -g @pomodoro_skip '_'                      # Skip a Pomodoro/break
 
 set -g @pomodoro_mins 25                       # The duration of the Pomodoro
 set -g @pomodoro_break_mins 5                  # The duration of the break after the Pomodoro completes
