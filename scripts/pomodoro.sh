@@ -345,12 +345,16 @@ pomodoro_skip() {
 
 pomodoro_custom() {
 	tmux command-prompt \
-		-I "$(get_pomodoro_duration), $(get_pomodoro_break)" \
-		-p 'Pomodoro (mins):, Break (mins):' \
+		-I "$(get_pomodoro_duration),$(get_pomodoro_break),$(get_pomodoro_intervals),$(get_pomodoro_long_break)" \
+		-p 'Pomodoro (mins):,Break (mins):,Intervals:,Long Break (mins):' \
 		"set -g @pomodoro_mins %1;
 		 set -g @pomodoro_break_mins %2;
+		 set -g @pomodoro_intervals %3;
+		 set -g @pomodoro_long_break_mins %4;
 		 run-shell 'echo %1 > $POMODORO_USER_MINS_FILE';
 		 run-shell 'echo %2 > $POMODORO_USER_BREAK_MINS_FILE'
+		 run-shell 'echo %3 > $POMODORO_USER_INTERVAL_FILE'
+		 run-shell 'echo %4 > $POMODORO_USER_LONG_BREAK_MINS_FILE'
 		"
 }
 

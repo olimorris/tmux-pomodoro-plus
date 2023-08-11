@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
-# ______________________________________________________________| locals |__ ;
+# _______________________________________________________________| locals |__ ;
 
 CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-POMODORO_MINS_FILE="$CURRENT_DIR/scripts/user_mins.txt"
-POMODORO_BREAK_MINS_FILE="$CURRENT_DIR/scripts/user_break_mins.txt"
+
+POMODORO_USER_MINS_FILE="$CURRENT_DIR/scripts/user_mins.txt"
+POMODORO_USER_INTERVAL_FILE="$CURRENT_DIR/scripts/user_interval.txt"
+POMODORO_USER_BREAK_MINS_FILE="$CURRENT_DIR/scripts/user_break_mins.txt"
+POMODORO_USER_LONG_BREAK_MINS_FILE="$CURRENT_DIR/scripts/user_long_break_mins.txt"
 
 default_toggle_pomodoro="p"
 toggle_pomodoro="@pomodoro_toggle"
@@ -15,25 +18,36 @@ cancel_pomodoro="@pomodoro_cancel"
 pomodoro_status="#($CURRENT_DIR/scripts/pomodoro.sh)"
 pomodoro_status_interpolation_string="\#{pomodoro_status}"
 
-# _____________________________________________________________| methods |__ ;
+# ______________________________________________________________| methods |__ ;
 
 source "$CURRENT_DIR/scripts/helpers.sh"
 
-sync_timers() {
+load_custom_timings() {
 	pomodoro_mins_exists=$(tmux show-option -gqv "@pomodoro_mins")
-	export pomodoro_mins_exists
 
 	if [ "$pomodoro_mins_exists" != "" ]; then
-		remove_file "$POMODORO_MINS_FILE"
-		remove_file "$POMODORO_BREAK_MINS_FILE"
-	elif [ -f "$POMODORO_MINS_FILE" ] &&
-		[ -f "$POMODORO_BREAK_MINS_FILE" ]; then
-		set_tmux_option "@pomodoro_mins $(read_file "$POMODORO_MINS_FILE")"
-		set_tmux_option "@pomodoro_break_mins $(read_file "$POMODORO_BREAK_MINS_FILE")"
+		remove_file "$POMODORO_USER_MINS_FILE"
+		remove_file "$POMODORO_USER_INTERVAL_FILE"
+		remove_file "$POMODORO_USER_BREAK_MINS_FILE"
+		remove_file "$POMODORO_USER_LONG_BREAK_MINS_FILE"
+		return
+	fi
+
+	if file_exists "$POMODORO_USER_MINS_FILE"; then
+		set_tmux_option "@pomodoro_mins $(read_file "$POMODORO_USER_MINS_FILE")"
+	fi
+	if file_exists "$POMODORO_USER_INTERVAL_FILE"; then
+		set_tmux_option "@pomodoro_intervals $(read_file "$POMODORO_USER_INTERVAL_FILE")"
+	fi
+	if file_exists "$POMODORO_USER_BREAK_MINS_FILE"; then
+		set_tmux_option "@pomodoro_break_mins $(read_file "$POMODORO_USER_BREAK_MINS_FILE")"
+	fi
+	if file_exists "$POMODORO_USER_LONG_BREAK_MINS_FILE"; then
+		set_tmux_option "@pomodoro_long_break_mins $(read_file "$POMODORO_USER_LONG_BREAK_MINS_FILE")"
 	fi
 }
 
-set_bindings() {
+set_keybindings() {
 	toggle_binding=$(get_tmux_option "$toggle_pomodoro" "$default_toggle_pomodoro")
 	for key in $toggle_binding; do
 		tmux bind-key "$key" run-shell "$CURRENT_DIR/scripts/pomodoro.sh toggle"
@@ -68,8 +82,8 @@ update_tmux_option() {
 }
 
 main() {
-	sync_timers
-	set_bindings
+	load_custom_timings
+	set_keybindings
 	update_tmux_option "status-right"
 	update_tmux_option "status-left"
 }
