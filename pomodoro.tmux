@@ -30,7 +30,7 @@ load_custom_timings() {
 		remove_file "$POMODORO_USER_INTERVAL_FILE"
 		remove_file "$POMODORO_USER_BREAK_MINS_FILE"
 		remove_file "$POMODORO_USER_LONG_BREAK_MINS_FILE"
-		return
+		return 0
 	fi
 
 	if file_exists "$POMODORO_USER_MINS_FILE"; then

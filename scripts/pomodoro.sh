@@ -414,26 +414,26 @@ pomodoro_status() {
 
 	# Don't display anything if the Pomodoro isn't in progress
 	if [ "$start_time" -eq 1 ]; then
-		return
+		return 0
 	fi
 
 	# Display the frozen countdown to the user
 	if is_paused && file_exists "$FROZEN_DISPLAY_FILE"; then
 		printf "%s%s" "$(get_tmux_option "$pomodoro_pause" "$pomodoro_pause_default")" "$(read_file "$FROZEN_DISPLAY_FILE")"
 		show_intervals
-		return
+		return 0
 	fi
 
 	# Display the waiting prompts to the user
 	if [ "$pomodoro_status" == "waiting_for_pomodoro" ]; then
 		printf "%s" "$(get_tmux_option "$pomodoro_prompt_pomodoro" "$pomodoro_prompt_pomodoro_default")"
 		show_intervals
-		return
+		return 0
 	fi
 	if [ "$pomodoro_status" == "waiting_for_break" ]; then
 		printf "%s" "$(get_tmux_option "$pomodoro_prompt_break" "$pomodoro_prompt_break_default")"
 		show_intervals
-		return
+		return 0
 	fi
 
 	# _____________________________________________________| pomodoro |__ ;
@@ -454,7 +454,7 @@ pomodoro_status() {
 		fi
 
 		show_intervals
-		return
+		return 0
 	fi
 
 	# ________________________________________________________| break |__ ;
@@ -468,7 +468,7 @@ pomodoro_status() {
 			pomodoro_status="waiting_for_break"
 			set_status "$pomodoro_status"
 			send_notification "🍅 Start break?" "Start the break now?"
-			return
+			return 0
 		fi
 
 		if intervals_reached; then
@@ -477,7 +477,7 @@ pomodoro_status() {
 
 		set_status "$pomodoro_status"
 		break_start
-		return
+		return 0
 	fi
 
 	# Has the break completed or been skipped?
@@ -497,7 +497,7 @@ pomodoro_status() {
 		fi
 
 		show_intervals
-		return
+		return 0
 	fi
 
 	# Break complete
@@ -507,7 +507,7 @@ pomodoro_status() {
 		if prompt_user; then
 			set_status "waiting_for_pomodoro"
 			send_notification "🍅 Break completed!" "Start the Pomodoro?"
-			return
+			return 0
 		fi
 
 		pomodoro_start
