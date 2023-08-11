@@ -1,4 +1,4 @@
-Copyright (C) 2021 Oli Morris
+Copyright (C) 2023 Oli Morris
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the "Software"),
