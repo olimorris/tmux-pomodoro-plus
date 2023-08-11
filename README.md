@@ -102,7 +102,6 @@ set -g @pomodoro_granularity 'off'             # Enables MM:SS (ex: 00:10) forma
 
 It's possible to configure the timings from built-in menus within the app:
 
-
 ### Customising the status line
 
 The output from the plugin can be customised to fit in with your statusline:
@@ -127,10 +126,6 @@ A real-time countdown can be also be displayed:
 set -g @pomodoro_granularity 'on'
 set -g status-interval 1                       # Refresh the status line every second
 ```
-
-## :microscope: How it works
-
-- Todo: Include a graphic
 
 ## :clap: Credits
 
