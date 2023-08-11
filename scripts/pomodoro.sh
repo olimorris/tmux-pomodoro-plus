@@ -181,7 +181,7 @@ prompt_user() {
 }
 
 is_being_prompted() {
-	if [ "$(read_status)" == "waiting_break" ] || [ "$(read_status)" == "waiting_pomodoro" ]; then
+	if [ "$(read_status)" == "waiting_for_break" ] || [ "$(read_status)" == "waiting_for_pomodoro" ]; then
 		return 0
 	fi
 	return 1
@@ -216,7 +216,7 @@ show_intervals() {
 }
 
 pomodoro_toggle() {
-	if [ "$(read_status)" == "waiting_break" ]; then
+	if [ "$(read_status)" == "waiting_for_break" ]; then
 		pomodoro_status="break"
 		if intervals_reached; then
 			pomodoro_status="long_break"
@@ -425,12 +425,12 @@ pomodoro_status() {
 	fi
 
 	# Display the waiting prompts to the user
-	if [ "$pomodoro_status" == "waiting_pomodoro" ]; then
+	if [ "$pomodoro_status" == "waiting_for_pomodoro" ]; then
 		printf "%s" "$(get_tmux_option "$pomodoro_prompt_pomodoro" "$pomodoro_prompt_pomodoro_default")"
 		show_intervals
 		return
 	fi
-	if [ "$pomodoro_status" == "waiting_break" ]; then
+	if [ "$pomodoro_status" == "waiting_for_break" ]; then
 		printf "%s" "$(get_tmux_option "$pomodoro_prompt_break" "$pomodoro_prompt_break_default")"
 		show_intervals
 		return
@@ -465,7 +465,7 @@ pomodoro_status() {
 		remove_time_paused_file
 
 		if prompt_user; then
-			pomodoro_status="waiting_break"
+			pomodoro_status="waiting_for_break"
 			set_status "$pomodoro_status"
 			send_notification "🍅 Start break?" "Start the break now?"
 			return
@@ -505,7 +505,7 @@ pomodoro_status() {
 		remove_time_paused_file
 
 		if prompt_user; then
-			set_status "waiting_pomodoro"
+			set_status "waiting_for_pomodoro"
 			send_notification "🍅 Break completed!" "Start the Pomodoro?"
 			return
 		fi
