@@ -135,7 +135,6 @@ intervals_reached() {
 	return 1
 }
 
-# If the user doesn't want to be automatically repeat Pomodoros then we prompt them
 prompt_user() {
 	if [ "$(get_pomodoro_repeat)" == "off" ]; then
 		return 0
@@ -156,6 +155,7 @@ skipped_pomodoro() {
 	fi
 	return 1
 }
+
 skipped_break() {
 	if [ "$(read_file "$SKIPPED_FILE")" == "break" ]; then
 		return 0
@@ -174,8 +174,15 @@ break_length() {
 show_intervals() {
 	show_intervals="$(show_pomodoro_intervals)"
 	if [ "$show_intervals" != "0" ]; then
-		printf " $show_intervals" "$(read_file "$INTERVAL_FILE")" "$(get_pomodoro_intervals)"
+		printf "$show_intervals" "$(read_file "$INTERVAL_FILE")" "$(get_pomodoro_intervals)"
 	fi
+}
+
+is_paused() {
+	if file_exists "$PAUSED_FILE"; then
+		return 0
+	fi
+	return 1
 }
 
 pomodoro_toggle() {
@@ -191,13 +198,13 @@ pomodoro_toggle() {
 		return 0
 	fi
 
-	if ! is_being_prompted && file_exists "$START_FILE" && ! file_exists "$PAUSED_FILE"; then
+	if ! is_being_prompted && file_exists "$START_FILE" && ! is_paused; then
 		pomodoro_pause
 		refresh_statusline
 		return 0
 	fi
 
-	if ! is_being_prompted && file_exists "$PAUSED_FILE"; then
+	if ! is_being_prompted && is_paused; then
 		pomodoro_resume
 		refresh_statusline
 		return 0
@@ -209,13 +216,6 @@ pomodoro_toggle() {
 pomodoro_pause() {
 	write_to_file "$(get_seconds)" "$PAUSED_FILE"
 	send_notification "🍅 Pomodoro paused!" "Your Pomodoro has been paused"
-}
-
-is_paused() {
-	if file_exists "$PAUSED_FILE"; then
-		return 0
-	fi
-	return 1
 }
 
 pomodoro_resume() {
