@@ -173,7 +173,12 @@ break_length() {
 
 show_intervals() {
 	show_intervals="$(show_pomodoro_intervals)"
-	if [ "$show_intervals" != "0" ]; then
+	count=$(echo "$show_intervals" | grep -o "%s" | wc -l)
+
+	if [ "$count" -eq 1 ]; then
+		printf "$show_intervals" "$(read_file "$INTERVAL_FILE")"
+	fi
+	if [ "$count" -eq 2 ]; then
 		printf "$show_intervals" "$(read_file "$INTERVAL_FILE")" "$(get_pomodoro_intervals)"
 	fi
 }
