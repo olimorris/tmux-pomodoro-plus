@@ -89,7 +89,7 @@ set -g @pomodoro_repeat 'off'                  # Automatically repeat the Pomodo
 
 set -g @pomodoro_on " 🍅"                      # The formatted output when the Pomodoro is running
 set -g @pomodoro_complete " ✔︎"                 # The formatted output when the break is running
-set -g @pomodoro_pause=" ⏸︎"                    # The formatted output when the Pomodoro/break is paused
+set -g @pomodoro_pause " ⏸︎"                    # The formatted output when the Pomodoro/break is paused
 set -g @pomodoro_prompt_break " ⏲︎ break?"      # The formatted output when waiting to start a break
 set -g @pomodoro_prompt_pomodoro " ⏱︎ start?"   # The formatted output when waiting to start a Pomodoro
 
