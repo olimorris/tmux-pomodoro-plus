@@ -12,7 +12,7 @@
 </p>
 
 <p align="center">
-Incorporate the <a href="https://en.wikipedia.org/wiki/Pomodoro_Technique">Pomodoro technique</a> into your <a href="https://github.com/tmux/tmux">tmux</a> setup. Forked from <a href="https://github.com/alexanderjeurissen/tmux-pomodoro">Tmux Pomodoro</a><br><br>Please subscribe to <a href="https://github.com/olimorris/tmux-pomodoro-plus/issues/29">this issue</a> to be notifed of any breaking changes to the plugin
+Incorporate the <a href="https://en.wikipedia.org/wiki/Pomodoro_Technique">Pomodoro technique</a> into your <a href="https://github.com/tmux/tmux">tmux</a> setup. Forked from <a href="https://github.com/alexanderjeurissen/tmux-pomodoro">Tmux Pomodoro</a><br><br>Please subscribe to <a href="https://github.com/olimorris/tmux-pomodoro-plus/issues/29">this issue</a> to be notified of any breaking changes to the plugin
 </p>
 
 ## :sparkles: Features
@@ -21,7 +21,7 @@ Incorporate the <a href="https://en.wikipedia.org/wiki/Pomodoro_Technique">Pomod
 - Skip, pause and resume a Pomodoro/break at any point
 - Customise the Pomodoro duration, break times and intervals
 - Restart your Pomodoros to automatically or be prompted
-- Desktop alerts for Pomodoros and breaks (macOS and Linux only)
+- Desktop alerts for Pomodoros and breaks (MacOS and Linux only)
 - Custom keybindings
 
 ## :camera: Screenshots
@@ -93,7 +93,7 @@ set -g @pomodoro_pause " ⏸︎"                    # The formatted output when 
 set -g @pomodoro_prompt_break " ⏲︎ break?"      # The formatted output when waiting to start a break
 set -g @pomodoro_prompt_pomodoro " ⏱︎ start?"   # The formatted output when waiting to start a Pomodoro
 
-set -g @pomodoro_menu_position "R"             # The location of the menu releative to the screen
+set -g @pomodoro_menu_position "R"             # The location of the menu relative to the screen
 set -g @pomodoro_sound 'off'                   # Sound for desktop notifications (Run `ls /System/Library/Sounds` for a list of sounds to use on Mac)
 set -g @pomodoro_notifications 'off'           # Enable desktop notifications from your terminal
 set -g @pomodoro_granularity 'off'             # Enables MM:SS (ex: 00:10) format instead of the default (ex: 1m)
