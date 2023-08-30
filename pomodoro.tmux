@@ -68,7 +68,7 @@ set_keybindings() {
 
 do_interpolation() {
 	local string="$1"
-	local interpolated="${string/$pomodoro_status_interpolation_string/$pomodoro_status}"
+	local interpolated="${string//$pomodoro_status_interpolation_string/$pomodoro_status}"
 	echo "$interpolated"
 }
 
