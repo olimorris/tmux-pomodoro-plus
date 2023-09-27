@@ -50,19 +50,19 @@ load_custom_timings() {
 set_keybindings() {
 	toggle_binding=$(get_tmux_option "$toggle_pomodoro" "$default_toggle_pomodoro")
 	for key in $toggle_binding; do
-		tmux bind-key "$key" run-shell "$CURRENT_DIR/scripts/pomodoro.sh toggle"
-		tmux bind-key "C-$key" run-shell "$CURRENT_DIR/scripts/pomodoro.sh menu"
-		tmux bind-key "M-$key" run-shell "$CURRENT_DIR/scripts/pomodoro.sh custom"
+		tmux bind-key -N "Toggle between starting/pausing a Pomodoro/break" "$key" run-shell "$CURRENT_DIR/scripts/pomodoro.sh toggle"
+		tmux bind-key -N "Open the Pomodoro timer menu" "C-$key" run-shell "$CURRENT_DIR/scripts/pomodoro.sh menu"
+		tmux bind-key -N "Set a custom Pomodoro timer" "M-$key" run-shell "$CURRENT_DIR/scripts/pomodoro.sh custom"
 	done
 
 	skip_binding=$(get_tmux_option "$skip_pomodoro" "$default_skip_pomodoro")
 	for key in $skip_binding; do
-		tmux bind-key "$key" run-shell "$CURRENT_DIR/scripts/pomodoro.sh skip"
+		tmux bind-key -N "Skip a Pomodoro/break" "$key" run-shell "$CURRENT_DIR/scripts/pomodoro.sh skip"
 	done
 
 	cancel_binding=$(get_tmux_option "$cancel_pomodoro" "$default_cancel_pomodoro")
 	for key in $cancel_binding; do
-		tmux bind-key "$key" run-shell "$CURRENT_DIR/scripts/pomodoro.sh cancel"
+		tmux bind-key -N "Cancel a Pomodoro/break" "$key" run-shell "$CURRENT_DIR/scripts/pomodoro.sh cancel"
 	done
 }
 
