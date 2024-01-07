@@ -118,7 +118,7 @@ set -g @pomodoro_prompt_pomodoro "#[fg=$color_gray]🕤 ? "
 The current and total number of intervals can also be displayed:
 
 ```bash
-set -g @pomodoro_show_intervals "#[fg=$color_gray][%s/%s]"
+set -g @pomodoro_interval_display "[%s/%s]"
 ```
 
 > **Note**: If you provide just 1 `%s` then the current interval count will be displayed only
