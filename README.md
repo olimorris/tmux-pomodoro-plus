@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://user-images.githubusercontent.com/9512444/179077304-a6c31ccb-ad8f-41d9-97f8-f09a1c4935ad.png" alt="Tmux Pomodoro Plus" />
+<img src="https://github.com/olimorris/tmux-pomodoro-plus/assets/9512444/a3e445f0-6493-4375-977e-b89013968604" alt="Tmux Pomodoro Plus" />
 </p>
 
 <h1 align="center">Tmux Pomodoro Plus</h1>
