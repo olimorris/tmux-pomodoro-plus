@@ -296,6 +296,7 @@ pomodoro_cancel() {
 }
 
 pomodoro_skip() {
+	remove_file "$PAUSED_FILE"
 	pomodoro_status="$(read_status)"
 
 	if [ "$pomodoro_status" = "in_progress" ]; then
