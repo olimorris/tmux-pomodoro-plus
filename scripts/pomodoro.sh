@@ -261,16 +261,25 @@ increment_interval() {
 }
 
 pomodoro_start() {
+	local verb=${1:-start}
+
 	clean_env
 	mkdir -p $POMODORO_DIR
 	write_to_file "$(get_seconds)" "$START_FILE"
 
 	set_status "in_progress"
-	increment_interval
+
+	if [ "$verb" = start ]; then
+		increment_interval
+	fi
 
 	refresh_statusline
-	send_notification "🍅 Pomodoro started!" "Your Pomodoro is underway"
+	send_notification "🍅 Pomodoro ${verb}ed!" "Your Pomodoro is underway"
 	return 0
+}
+
+pomodoro_restart() {
+	pomodoro_start restart
 }
 
 break_start() {
@@ -490,6 +499,8 @@ main() {
 		pomodoro_toggle
 	elif [ "$cmd" = "start" ]; then
 		pomodoro_start
+	elif [ "$cmd" = "restart" ]; then
+		pomodoro_restart
 	elif [ "$cmd" = "skip" ]; then
 		pomodoro_skip
 	elif [ "$cmd" = "cancel" ]; then
