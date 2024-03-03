@@ -86,6 +86,7 @@ set -g @pomodoro_break_mins 5                  # The duration of the break after
 set -g @pomodoro_intervals 4                   # The number of intervals before a longer break is started
 set -g @pomodoro_long_break_mins 25            # The duration of the long break
 set -g @pomodoro_repeat 'off'                  # Automatically repeat the Pomodoros?
+set -g @pomodoro_disable_breaks 'off'          # Turn off breaks
 
 set -g @pomodoro_on " 🍅"                      # The formatted output when the Pomodoro is running
 set -g @pomodoro_complete " ✔︎"                 # The formatted output when the break is running
