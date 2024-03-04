@@ -40,6 +40,7 @@ pomodoro_interval_display="@pomodoro_interval_display"
 pomodoro_sound="@pomodoro_sound"
 pomodoro_notifications="@pomodoro_notifications"
 pomodoro_granularity="@pomodoro_granularity"
+pomodoro_disable_breaks="@pomodoro_disable_breaks"
 
 # ______________________________________________________________| methods |__ ;
 
@@ -67,6 +68,10 @@ get_pomodoro_long_break() {
 
 get_pomodoro_repeat() {
 	get_tmux_option "$pomodoro_repeat" "off"
+}
+
+get_pomodoro_disable_breaks() {
+	get_tmux_option "$pomodoro_disable_breaks" "off"
 }
 
 get_seconds() {
@@ -387,6 +392,7 @@ pomodoro_status() {
 	start_time=$(read_file "$START_FILE")
 	elapsed_time=$((current_time - start_time - time_paused_for))
 	pomodoro_duration="$(minutes_to_seconds "$(get_pomodoro_duration)")"
+	disable_breaks=$(get_pomodoro_disable_breaks)
 
 	# ___________________________________________________| statusline |__ ;
 
@@ -438,7 +444,7 @@ pomodoro_status() {
 	# ________________________________________________________| break |__ ;
 
 	# Pomodoro completed, starting the break
-	if [ "$pomodoro_completed" = true ] && [ "$pomodoro_status" == "in_progress" ]; then
+	if [ "$pomodoro_completed" = true ] && [ "$pomodoro_status" == "in_progress" ] && [ "$disable_breaks" != "on" ]; then
 		pomodoro_status="break"
 		remove_time_paused_file
 
@@ -455,6 +461,20 @@ pomodoro_status() {
 
 		set_status "$pomodoro_status"
 		break_start
+		return 0
+	fi
+
+	# Breaks are disabled
+	if [ "$pomodoro_completed" = true ] && [ "$pomodoro_status" == "in_progress" ] && [ "$disable_breaks" == "on" ]; then
+		remove_time_paused_file
+
+		if prompt_user; then
+			set_status "waiting_for_pomodoro"
+			send_notification "🍅 Pomodo completed!" "Start a new Pomodoro?"
+			return 0
+		fi
+
+		pomodoro_start
 		return 0
 	fi
 
