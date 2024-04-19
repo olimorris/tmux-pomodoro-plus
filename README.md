@@ -101,10 +101,6 @@ set -g @pomodoro_notifications 'off'           # Enable desktop notifications fr
 set -g @pomodoro_granularity 'off'             # Enables MM:SS (ex: 00:10) format instead of the default (ex: 1m)
 ```
 
-### Using the menu
-
-It's possible to configure the timings from built-in menus within the app:
-
 ### Customising the status line
 
 The output from the plugin can be customised to fit in with your statusline:
