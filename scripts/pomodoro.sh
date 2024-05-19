@@ -3,7 +3,7 @@
 
 CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 POMODORO_DIR="/tmp/pomodoro"
-POMODORO_USER="${HOME}/.cache/pomodoro"
+POMODORO_USER="${HOME}/.cache/tmux_pomodoro_plus"
 
 START_FILE="$POMODORO_DIR/start_time.txt"                # Stores the start time of the Pomodoro/break
 PAUSED_FILE="$POMODORO_DIR/paused_time.txt"              # Stores the time when the Pomodoro/break was paused
