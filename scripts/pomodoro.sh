@@ -3,6 +3,7 @@
 
 CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 POMODORO_DIR="/tmp/pomodoro"
+POMODORO_USER="${HOME}/.cache/tmux_pomodoro_plus"
 
 START_FILE="$POMODORO_DIR/start_time.txt"                # Stores the start time of the Pomodoro/break
 PAUSED_FILE="$POMODORO_DIR/paused_time.txt"              # Stores the time when the Pomodoro/break was paused
@@ -13,10 +14,11 @@ INTERVAL_FILE="$POMODORO_DIR/interval_count.txt"         # Stores the current in
 STATUS_FILE="$POMODORO_DIR/current_status.txt"           # Stores the current status of the Pomodoro/break
 
 # Store the user's custom timings
-POMODORO_USER_MINS_FILE="$CURRENT_DIR/user_mins.txt"
-POMODORO_USER_INTERVAL_FILE="$CURRENT_DIR/user_interval.txt"
-POMODORO_USER_BREAK_MINS_FILE="$CURRENT_DIR/user_break_mins.txt"
-POMODORO_USER_LONG_BREAK_MINS_FILE="$CURRENT_DIR/user_long_break_mins.txt"
+mkdir -p $POMODORO_USER
+POMODORO_USER_MINS_FILE="$POMODORO_USER/user_mins.txt"
+POMODORO_USER_INTERVAL_FILE="$POMODORO_USER/user_interval.txt"
+POMODORO_USER_BREAK_MINS_FILE="$POMODORO_USER/user_break_mins.txt"
+POMODORO_USER_LONG_BREAK_MINS_FILE="$POMODORO_USER/user_long_break_mins.txt"
 
 # Map tmux options to variables
 pomodoro_mins="@pomodoro_mins"
