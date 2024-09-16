@@ -68,13 +68,31 @@ send_notification() {
 	if [ "$(get_notifications)" == 'on' ]; then
 		local title=$1
 		local message=$2
+		sound_file=$(get_sound_file)
 		sound=$(get_sound)
+		export sound_file
 		export sound
 		case "$OSTYPE" in
 		linux* | *bsd*)
 			notify-send -t 8000 "$title" "$message"
 			if [[ "$sound" == "on" ]]; then
-				beep -D 1500
+				if command -v pw-play &>/dev/null && [[ "$sound_file" != "off" ]]; then
+					if [[ -f $sound_file ]]; then
+						echo "pw-play \"$sound_file\"" | at now
+					else
+						sound_file="/usr/share/sounds/freedesktop/stereo/bell.oga"
+						echo "pw-play \"$sound_file\"" | at now
+					fi
+				elif command -v paplay &>/dev/null && [[ "$sound_file" != "off" ]]; then
+					if [[ -f $sound_file ]]; then
+						echo "paplay \"$sound_file\"" | at now
+					else
+						sound_file="/usr/share/sounds/freedesktop/stereo/bell.oga"
+						echo "paplay \"$sound_file\"" | at now
+					fi
+				elif command -v beep &>/dev/null; then
+					beep -D 1500
+				fi
 			fi
 			;;
 		darwin*)
