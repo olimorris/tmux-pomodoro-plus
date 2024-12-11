@@ -93,6 +93,13 @@ main() {
 	set_keybindings
 	update_tmux_option "status-right"
 	update_tmux_option "status-left"
+
+	local lines=$(get_tmux_option "status")
+	if [[ "$lines" =~ ^[0-9]+$ ]] && [ "$lines" -ge 2 ]; then
+	 	for (( i = 1; i < lines; i++ )); do
+			update_tmux_option "status-format[$i]"
+		done
+	fi
 }
 
 main
