@@ -68,20 +68,25 @@ send_notification() {
 	if [ "$(get_notifications)" == 'on' ]; then
 		local title=$1
 		local message=$2
+		local finished=${3:-false}
 		sound=$(get_sound)
 		export sound
 		case "$OSTYPE" in
 		linux* | *bsd*)
 			notify-send -t 8000 "$title" "$message"
-			if [[ "$sound" == "on" ]]; then
-				beep -D 1500
+			if $finished; then
+				if [[ "$sound" == "on" ]]; then
+					beep -D 1500
+				elif [[ "$sound" != "off" ]]; then
+					$sound
+				fi
 			fi
 			;;
 		darwin*)
-			if [[ "$sound" == "off" ]]; then
-				osascript -e 'display notification "'"$message"'" with title "'"$title"'"'
-			else
+			if [[ "$sound" != "off" ]] && $finished; then
 				osascript -e 'display notification "'"$message"'" with title "'"$title"'" sound name "'"$sound"'"'
+			else
+				osascript -e 'display notification "'"$message"'" with title "'"$title"'"'
 			fi
 			;;
 		esac
