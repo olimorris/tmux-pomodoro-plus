@@ -453,7 +453,7 @@ pomodoro_status() {
 		if prompt_user; then
 			pomodoro_status="waiting_for_break"
 			set_status "$pomodoro_status"
-			send_notification "🍅 Pomodoro completed!" "Start the break now?"
+			send_notification "🍅 Pomodoro completed!" "Start the break now?" true
 			return 0
 		fi
 
@@ -472,7 +472,7 @@ pomodoro_status() {
 
 		if prompt_user; then
 			set_status "waiting_for_pomodoro"
-			send_notification "🍅 Pomodo completed!" "Start a new Pomodoro?"
+			send_notification "🍅 Pomodo completed!" "Start a new Pomodoro?" true
 			return 0
 		fi
 
@@ -506,7 +506,7 @@ pomodoro_status() {
 
 		if prompt_user; then
 			set_status "waiting_for_pomodoro"
-			send_notification "🍅 Break completed!" "Start the Pomodoro?"
+			send_notification "🍅 Break completed!" "Start the Pomodoro?" true
 			return 0
 		fi
 

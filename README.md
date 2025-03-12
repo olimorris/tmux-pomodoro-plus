@@ -97,6 +97,8 @@ set -g @pomodoro_prompt_pomodoro " ⏱︎ start?"   # The formatted output when 
 
 set -g @pomodoro_menu_position "R"             # The location of the menu relative to the screen
 set -g @pomodoro_sound 'off'                   # Sound for desktop notifications (Run `ls /System/Library/Sounds` for a list of sounds to use on Mac)
+                                               # (On Linux add `on` to use the `beep` program or add your custom beeping command)
+
 set -g @pomodoro_notifications 'off'           # Enable desktop notifications from your terminal
 set -g @pomodoro_granularity 'off'             # Enables MM:SS (ex: 00:10) format instead of the default (ex: 1m)
 ```
